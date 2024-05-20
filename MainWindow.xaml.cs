@@ -29,5 +29,19 @@ namespace MartinsHaushaltsbuch
             newForm.Show();                             //show the new form.
             this.Close();                               //only if you want to close the current form.
         }
+
+        private void Button_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            var newForm = new Window_Settings();             //create your new form.
+            newForm.Show();                             //show the new form.
+            this.Close();                               //only if you want to close the current form.
+        }
+
+        private void Button_Analysis_Click(object sender, RoutedEventArgs e)
+        {
+            var newForm = new Window_Analysis();             //create your new form.
+            newForm.Show();                             //show the new form.
+            this.Close();                               //only if you want to close the current form.
+        }
     }
 }
