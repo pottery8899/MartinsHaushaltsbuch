@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MartinsHaushaltsbuch"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1004" Width="1514"
+        Title="Startseite" Height="1004" Width="1514"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         WindowStyle="None"
@@ -49,8 +49,7 @@
             </Button.BorderBrush>
         </Button>
         <Button
-
-    Width="500" VerticalAlignment="Top" Margin="0,700,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Analyse" Click="Button_Analysis_Click">
+    Width="500" VerticalAlignment="Top" Margin="0,500,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Analyse" Click="Button_Analysis_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>
@@ -65,8 +64,7 @@
             </Button.BorderBrush>
         </Button>
         <Button
-
-    Width="500" VerticalAlignment="Top" Margin="0,500,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Einstellungen" Click="Button_Settings_Click">
+Width="500" VerticalAlignment="Top" Margin="0,700,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Einstellungen" Click="Button_Settings_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>

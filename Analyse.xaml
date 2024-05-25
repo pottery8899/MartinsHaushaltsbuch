@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MartinsHaushaltsbuch"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="Window_NewEntry" Height="1004" Width="1514"
+        Title="Analyse" Height="1004" Width="1514"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         WindowStyle="None"
