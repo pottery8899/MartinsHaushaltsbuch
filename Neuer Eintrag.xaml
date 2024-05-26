@@ -56,6 +56,5 @@
             </Button.BorderBrush>
         </Button>
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="200" Content="Neuer Eintrag"></Button>
     </Grid>
 </mah:MetroWindow>
