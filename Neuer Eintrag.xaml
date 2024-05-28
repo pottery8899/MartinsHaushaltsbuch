@@ -56,5 +56,28 @@
             </Button.BorderBrush>
         </Button>
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
+
+        <!-- Formular für den neuen Eintrag -->
+        <StackPanel Margin="0,150,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="1044">
+            <TextBlock HorizontalAlignment="Center" Text="Titel der Buchung" FontSize="20"/>
+            <TextBox x:Name="TxtTitle" Width="500" Height="30" Margin="0,5,0,20"/>
+
+            <TextBlock HorizontalAlignment="Center" Text="Konto der Buchung" FontSize="20"/>
+            <ComboBox x:Name="CmbAccount" Width="500" Height="30" Margin="0,5,0,20"/>
+
+            <TextBlock HorizontalAlignment="Center" Text="Kategorie der Buchung" FontSize="20"/>
+            <ComboBox x:Name="CmbCategory" Width="500" Height="30" Margin="0,5,0,20"/>
+
+            <TextBlock HorizontalAlignment="Center" Text="Betrag der Buchung" FontSize="20"/>
+            <TextBox x:Name="TxtAmount" Width="500" Height="30" Margin="0,5,0,20"/>
+
+            <TextBlock HorizontalAlignment="Center" Text="Datum der Buchung" FontSize="20"/>
+            <DatePicker x:Name="DpDate" Width="500" Height="30" Margin="0,5,0,20"/>
+
+            <TextBlock HorizontalAlignment="Center" Text="Kommentar zur Buchung" FontSize="20"/>
+            <TextBox x:Name="TxtComment" Width="500" Height="100" Margin="0,5,0,20" TextWrapping="Wrap" AcceptsReturn="True"/>
+
+            <Button Content="Speichern" Width="130" Height="40" FontSize="15px" Click="Button_Save_Click"/>
+        </StackPanel>
     </Grid>
 </mah:MetroWindow>

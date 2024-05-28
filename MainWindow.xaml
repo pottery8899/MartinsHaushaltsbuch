@@ -36,13 +36,13 @@
 
     Width="500" VerticalAlignment="Top" Margin="0,300,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Neuer Eintrag" Click="Button_NewEntry_Click">
             <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <LinearGradientBrush EndPoint="0.8,1" StartPoint="0.8,0">
                     <GradientStop Color="#156082"/>
                     <GradientStop Color="White" Offset="1"/>
                 </LinearGradientBrush>
             </Button.Background>
             <Button.BorderBrush>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <LinearGradientBrush EndPoint="0.8,1" StartPoint="0.8,0">
                     <GradientStop Color="#156082"/>
                     <GradientStop Color="White" Offset="1"/>
                 </LinearGradientBrush>
@@ -78,5 +78,7 @@ Width="500" VerticalAlignment="Top" Margin="0,700,0,0" Height="100" HorizontalAl
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
+        <TextBlock Margin="0,1000,0,0" Width="300" Height="200" FontSize="30px" FontWeight="Bold" Text="{Binding Datum}">
+        </TextBlock>
     </Grid>
 </mah:MetroWindow>

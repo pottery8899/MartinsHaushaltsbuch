@@ -21,6 +21,7 @@ namespace MartinsHaushaltsbuch
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = Singleton_Filter.Instance;
         }
 
         private void Button_NewEntry_Click(object sender, RoutedEventArgs e)
