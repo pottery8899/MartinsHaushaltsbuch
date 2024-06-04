@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Linq;
 
 namespace MartinsHaushaltsbuch
 {
@@ -59,7 +60,37 @@ namespace MartinsHaushaltsbuch
                     TxtKontonummer.Text = string.Empty;
 
                     // Liste neu laden
-                    Load_List();
+                    Load_List_Konten();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Fehler: " + ex.Message);
+                }
+            }
+        }
+
+        private void Button_Kategorie_Save_Click(object sender, RoutedEventArgs e)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string query = "INSERT INTO TabelleKategorie (nameKategorie) VALUES (@Name)";
+
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Name", TxtNameKategorie.Text);
+
+                try
+                {
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    MessageBox.Show("Kategorie erfolgreich gespeichert.");
+
+                    // Leere die Eingabefelder
+                    TxtNameKategorie.Text = string.Empty;
+
+                    // Liste neu laden
+                    Load_List_Kategorie();
                 }
                 catch (Exception ex)
                 {
@@ -70,10 +101,11 @@ namespace MartinsHaushaltsbuch
 
         private void Window_Settings_Load(object sender, RoutedEventArgs e)
         {
-            Load_List();
+            Load_List_Konten();
+            Load_List_Kategorie();
         }
 
-        private void Load_List()
+        private void Load_List_Konten()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -89,6 +121,22 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        private void Load_List_Kategorie()
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("SELECT * FROM TabelleKategorie", conn);
+
+                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                DataTable datatable_kategorie = new DataTable();
+                dataAdapter.Fill(datatable_kategorie);
+
+                ListBoxKategorie.ItemsSource = datatable_kategorie.DefaultView;
+                ListBoxKategorieBearbeiten.ItemsSource = datatable_kategorie.DefaultView;
+            }
+        }
+
         private void ListBoxKontenBearbeiten_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ListBoxKontenBearbeiten.SelectedItem != null)
@@ -96,6 +144,15 @@ namespace MartinsHaushaltsbuch
                 DataRowView selectedRow = (DataRowView)ListBoxKontenBearbeiten.SelectedItem;
                 TxtNameBearbeiten.Text = selectedRow["name_Konto"].ToString();
                 TxtKontonummerBearbeiten.Text = selectedRow["Kontonummer"].ToString();
+            }
+        }
+
+        private void ListBoxKategorieBearbeiten_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ListBoxKategorieBearbeiten.SelectedItem != null)
+            {
+                DataRowView selectedRow = (DataRowView)ListBoxKategorieBearbeiten.SelectedItem;
+                TxtNameKategorieBearbeiten.Text = selectedRow["nameKategorie"].ToString();
             }
         }
 
@@ -119,7 +176,7 @@ namespace MartinsHaushaltsbuch
                         connection.Open();
                         command.ExecuteNonQuery();
                         MessageBox.Show("Konto erfolgreich gelöscht.");
-                        Load_List();
+                        Load_List_Konten();
                     }
                     catch (Exception ex)
                     {
@@ -130,6 +187,40 @@ namespace MartinsHaushaltsbuch
             else
             {
                 MessageBox.Show("Bitte wählen Sie ein Konto aus der Liste aus.");
+            }
+        }
+
+        private void Button_Delete_Kategorie_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListBoxKategorie.SelectedItem != null)
+            {
+                DataRowView selectedRow = (DataRowView)ListBoxKategorie.SelectedItem;
+                string kategorie = selectedRow["IdKategorie"].ToString();
+
+                string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    string query = "DELETE FROM TabelleKategorie WHERE IdKategorie = @KategorieID";
+
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@KategorieID", kategorie);
+
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("Kategorie erfolgreich gelöscht.");
+                        Load_List_Kategorie();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Fehler: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bitte wählen Sie eine Kategorie aus der Liste aus.");
             }
         }
 
@@ -157,7 +248,43 @@ namespace MartinsHaushaltsbuch
                         connection.Open();
                         command.ExecuteNonQuery();
                         MessageBox.Show("Konto erfolgreich aktualisiert.");
-                        Load_List();
+                        Load_List_Konten();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Fehler: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bitte wählen Sie ein Konto aus der Liste aus.");
+            }
+        }
+
+        private void Button_SaveChanges_Kategorie_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListBoxKategorieBearbeiten.SelectedItem != null)
+            {
+                DataRowView selectedRow = (DataRowView)ListBoxKategorieBearbeiten.SelectedItem;
+                string originalKategorie = selectedRow["IdKategorie"].ToString();
+                string newName = TxtNameKategorieBearbeiten.Text;
+
+                string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    string query = "UPDATE TabelleKategorie SET nameKategorie = @NameKategorie WHERE IdKategorie = @IdKategorie";
+
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@NameKategorie", newName);
+                    command.Parameters.AddWithValue("@IdKategorie", originalKategorie);
+
+                    try
+                    {
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                        MessageBox.Show("Kategorie erfolgreich aktualisiert.");
+                        Load_List_Kategorie();
                     }
                     catch (Exception ex)
                     {
