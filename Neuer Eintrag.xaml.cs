@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace MartinsHaushaltsbuch
 {
@@ -19,7 +20,6 @@ namespace MartinsHaushaltsbuch
     /// 
     public partial class Window_NewEntry : MetroWindow
     {
-        string ConnectionString = "Data Source = (localdb)\\MSSQLLocalDB;";
         public Window_NewEntry()
         {
             InitializeComponent();
@@ -48,7 +48,7 @@ namespace MartinsHaushaltsbuch
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString))
                 {
                     connection.Open();
 
