@@ -106,7 +106,7 @@
                         <TextBlock Text="Kontonummer:" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtKontonummer" Width="300" Height="30" Margin="0 0 0 10"/>
 
-                        <Button Content="Speichern" Width="100" Height="40" FontSize="16" Click="Button_Save_Click"/>
+                        <Button Content="Speichern" Width="120" Height="40" FontSize="16" Margin="20" Click="Button_Save_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -136,7 +136,7 @@
                         <TextBlock Text="Kontonummer:" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtKontonummerBearbeiten" Width="300" Height="30" Margin="0 0 0 10"/>
 
-                        <Button Content="Speichern" Width="100" Height="40" FontSize="16" Click="Button_SaveChanges_Click"/>
+                        <Button Content="Speichern" Width="120" Height="40" FontSize="16" Margin="20" Click="Button_SaveChanges_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -155,7 +155,7 @@
                                     </Border>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
-                        </ListBox>--
+                        </ListBox>
 
                         <!-- Divider -->
                         <Separator Margin="200,20,200,20" />
