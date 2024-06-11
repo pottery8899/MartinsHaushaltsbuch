@@ -30,7 +30,7 @@ namespace MartinsHaushaltsbuch
             LoadAccounts();
             LoadCategories();
             LoadEntries();
-            //LoadAccountsForFiltering();
+            LoadAccountsForFiltering();
         }
 
         string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
@@ -146,33 +146,41 @@ namespace MartinsHaushaltsbuch
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    // SQL-Befehl zum Einfügen eines neuen Eintrags
-                    string query = @"INSERT INTO TabelleBuchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
-                                     VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
-
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    // Überprüfe, ob ein Eintrag bearbeitet wird
+                    if (LstEntries.SelectedItem != null)
                     {
-                        // Parameterwerte setzen
+                        Entry selectedEntry = (Entry)LstEntries.SelectedItem;
+
+                        // Lösche den alten Eintrag
+                        string deleteQuery = "DELETE FROM TabelleBuchung WHERE Titel_Buchung = @Titel";
+                        SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection);
+                        deleteCommand.Parameters.AddWithValue("@Titel", selectedEntry.Titel_Buchung);
+                        deleteCommand.ExecuteNonQuery();
+                    }
+
+                    // Füge den neuen Eintrag hinzu
+                    string insertQuery = @"INSERT INTO TabelleBuchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
+                                 VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
+                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                    {
                         command.Parameters.AddWithValue("@Titel", TxtTitle.Text);
                         command.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
                         command.Parameters.AddWithValue("@Kategorie", CmbCategory.SelectedItem);
                         command.Parameters.AddWithValue("@Betrag", Convert.ToDouble(TxtAmount.Text));
                         command.Parameters.AddWithValue("@Datum", DpDate.SelectedDate);
                         command.Parameters.AddWithValue("@Kommentar", TxtComment.Text);
-
-                        // Befehl ausführen
                         command.ExecuteNonQuery();
-
-                        MessageBox.Show("Eintrag erfolgreich gespeichert!", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                        LoadEntries();
-                        ClearInputFields();
-
                     }
+
+                    MessageBox.Show("Eintrag erfolgreich gespeichert!", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Lade die Liste der Einträge neu
+                    LoadEntries();
+                    ClearInputFields();
                 }
             }
             catch (Exception ex)
@@ -180,6 +188,7 @@ namespace MartinsHaushaltsbuch
                 MessageBox.Show("Fehler beim Speichern des Eintrags: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void ClearInputFields()
         {
@@ -190,12 +199,79 @@ namespace MartinsHaushaltsbuch
             DpDate.SelectedDate = null; // Setze das Datum zurück
             TxtComment.Text = string.Empty;
         }
+
+//----------------------------------------------------------- Buttons Edit, Clear und Löschen --------------------------------------------------------------------------
+
+        private void Button_Edit_Click(object sender, RoutedEventArgs e)
+        {
+            // Überprüfe, ob ein Eintrag ausgewählt wurde
+            if (LstEntries.SelectedItem != null)
+            {
+                // Lade die ausgewählten Daten in das Formular
+                Entry selectedEntry = (Entry)LstEntries.SelectedItem;
+                TxtTitle.Text = selectedEntry.Titel_Buchung;
+                // Setze die ausgewählte Option in der ComboBox
+                CmbAccount.SelectedItem = selectedEntry.Konto_Buchung;
+                CmbCategory.SelectedItem = selectedEntry.Kategorie_Buchung;
+                TxtAmount.Text = selectedEntry.Betrag_Buchung.ToString();
+                DpDate.SelectedDate = selectedEntry.Datum_Buchung;
+                TxtComment.Text = selectedEntry.Kommentar_Buchung;
+            }
+            else
+            {
+                MessageBox.Show("Bitte wählen Sie einen Eintrag aus der Liste aus, den Sie bearbeiten möchten.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void Button_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            // Überprüfe, ob ein Eintrag ausgewählt wurde
+            if (LstEntries.SelectedItem != null)
+            {
+                // Frage den Benutzer, ob er den ausgewählten Eintrag wirklich löschen möchte
+                MessageBoxResult result = MessageBox.Show("Möchten Sie den ausgewählten Eintrag wirklich löschen?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Lösche den ausgewählten Eintrag aus der Datenbank
+                    Entry selectedEntry = (Entry)LstEntries.SelectedItem;
+                    string deleteQuery = "DELETE FROM TabelleBuchung WHERE Titel_Buchung = @Titel";
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        try
+                        {
+                            connection.Open();
+                            SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection);
+                            deleteCommand.Parameters.AddWithValue("@Titel", selectedEntry.Titel_Buchung);
+                            deleteCommand.ExecuteNonQuery();
+                            MessageBox.Show("Eintrag erfolgreich gelöscht.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
+                            // Lade die Liste der Einträge neu
+                            LoadEntries();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Fehler beim Löschen des Eintrags: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bitte wählen Sie einen Eintrag aus der Liste aus, den Sie löschen möchten.", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void Button_Reset_Click(object sender, RoutedEventArgs e)
+        {
+            ClearInputFields();
+        }
+
         //------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         private void LoadAccountsForFiltering()
         {
             List<string> accounts = new List<string>();
-            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
                 {
@@ -218,7 +294,5 @@ namespace MartinsHaushaltsbuch
             // Setze die Datenquelle der ComboBox auf die Liste der Konten
             CmbFilterAccount.ItemsSource = accounts;
         }
-
-
     }
 }

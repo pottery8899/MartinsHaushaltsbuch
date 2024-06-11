@@ -28,7 +28,7 @@
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <Button Width="130" VerticalAlignment="Top" Margin="320,20,0,0" Height="30" HorizontalAlignment="left" FontSize="15px" Content="Neuer Eintrag" Click="Button_NewEntry_Click">
+        <Button Width="130" VerticalAlignment="Top" Margin="320,20,0,0" Height="30" HorizontalAlignment="left" FontSize="15px" Content="Buchungen" Click="Button_NewEntry_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>

@@ -34,7 +34,7 @@
         </Button>
         <Button
 
-    Width="500" VerticalAlignment="Top" Margin="0,300,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Neuer Eintrag" Click="Button_NewEntry_Click">
+    Width="500" VerticalAlignment="Top" Margin="0,300,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Buchungen" Click="Button_NewEntry_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.8,1" StartPoint="0.8,0">
                     <GradientStop Color="#156082"/>
