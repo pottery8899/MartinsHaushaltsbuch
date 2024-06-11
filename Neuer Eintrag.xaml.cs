@@ -271,6 +271,7 @@ namespace MartinsHaushaltsbuch
         private void LoadAccountsForFiltering()
         {
             List<string> accounts = new List<string>();
+            CmbFilterAccount.Items.Add("Alle Konten");
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 try
@@ -282,6 +283,7 @@ namespace MartinsHaushaltsbuch
                     {
                         string accountName = reader["name_Konto"].ToString();
                         accounts.Add(accountName);
+                        CmbFilterAccount.Items.Add(accountName);
                     }
                 }
                 catch (Exception ex)
@@ -289,10 +291,6 @@ namespace MartinsHaushaltsbuch
                     MessageBox.Show("Fehler beim Laden der Konten: " + ex.Message);
                 }
             }
-            // Füge "Alle Konten" als erste Option hinzu
-            accounts.Insert(0, "Alle Konten");
-            // Setze die Datenquelle der ComboBox auf die Liste der Konten
-            CmbFilterAccount.ItemsSource = accounts;
         }
     }
 }
