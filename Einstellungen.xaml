@@ -100,9 +100,6 @@
                         <TextBlock Text="Name des Kontos" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtName" Width="300" Height="30" Margin="0 0 0 10"/>
 
-                        <TextBlock Text="Gesamtsumme des Kontos:" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
-                        <TextBox x:Name="TxtGesamtsumme" Width="300" Height="30" Margin="0 0 0 10"/>
-
                         <TextBlock Text="Kontonummer:" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtKontonummer" Width="300" Height="30" Margin="0 0 0 10"/>
 
