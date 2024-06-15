@@ -43,15 +43,29 @@ namespace MartinsHaushaltsbuch
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Tabelle_Konto (name_Konto, Kontonummer) VALUES (@Name, @Kontonummer)";
+                connection.Open();
 
+                // Überprüfen, ob Konto bereits existiert
+                string checkQuery = "SELECT COUNT(*) FROM Tabelle_Konto WHERE name_Konto = @Name OR Kontonummer = @Kontonummer";
+                SqlCommand checkCommand = new SqlCommand(checkQuery, connection);
+                checkCommand.Parameters.AddWithValue("@Name", TxtName.Text);
+                checkCommand.Parameters.AddWithValue("@Kontonummer", TxtKontonummer.Text);
+
+                int count = (int)checkCommand.ExecuteScalar();
+
+                if (count > 0)
+                {
+                    MessageBox.Show("Ein Konto mit diesem Namen oder dieser Kontonummer existiert bereits.");
+                    return;
+                }
+
+                string query = "INSERT INTO Tabelle_Konto (name_Konto, Kontonummer) VALUES (@Name, @Kontonummer)";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Name", TxtName.Text);
                 command.Parameters.AddWithValue("@Kontonummer", TxtKontonummer.Text);
 
                 try
                 {
-                    connection.Open();
                     command.ExecuteNonQuery();
                     MessageBox.Show("Konto erfolgreich gespeichert.");
 
@@ -75,14 +89,27 @@ namespace MartinsHaushaltsbuch
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO TabelleKategorie (nameKategorie) VALUES (@Name)";
+                connection.Open();
 
+                // Überprüfen, ob Kategorie bereits existiert
+                string checkQuery = "SELECT COUNT(*) FROM TabelleKategorie WHERE nameKategorie = @Name";
+                SqlCommand checkCommand = new SqlCommand(checkQuery, connection);
+                checkCommand.Parameters.AddWithValue("@Name", TxtNameKategorie.Text);
+
+                int count = (int)checkCommand.ExecuteScalar();
+
+                if (count > 0)
+                {
+                    MessageBox.Show("Eine Kategorie mit diesem Namen existiert bereits.");
+                    return;
+                }
+
+                string query = "INSERT INTO TabelleKategorie (nameKategorie) VALUES (@Name)";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Name", TxtNameKategorie.Text);
 
                 try
                 {
-                    connection.Open();
                     command.ExecuteNonQuery();
                     MessageBox.Show("Kategorie erfolgreich gespeichert.");
 
