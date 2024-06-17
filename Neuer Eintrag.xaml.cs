@@ -410,12 +410,12 @@ namespace MartinsHaushaltsbuch
             if (BtnToggleTransactionType.Content.ToString() == "Eingang")
             {
                 BtnToggleTransactionType.Content = "Ausgang";
-                BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffaacc"));
+                BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFCDD2"));
             }
             else
             {
                 BtnToggleTransactionType.Content = "Eingang";
-                BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffaacc"));
+                BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A5D6A7"));
             }
         }
 
