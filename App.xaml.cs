@@ -51,8 +51,11 @@ namespace MartinsHaushaltsbuch
             get => _konto;
             set
             {
-                _konto = value;
-                OnPropertyChanged(nameof(Konto));
+                if (_konto != value)
+                {
+                    _konto = value;
+                    OnPropertyChanged(nameof(Konto));
+                }
             }
         }
 

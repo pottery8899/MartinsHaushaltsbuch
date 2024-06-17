@@ -25,16 +25,23 @@ namespace MartinsHaushaltsbuch
             InitializeComponent();
         }
 
+        //---------------------- Aufruf der relvanten Funktionen bei Laden der Seite ----------------------
+
         private void Window_NewEntry_Loaded(object sender, RoutedEventArgs e)
         {
+            Singleton_Filter.Instance.Konto = "Alle Konten"; // Setzen des Standardwerts
             LoadAccounts();
             LoadCategories();
-            LoadEntries();
             LoadAccountsForFiltering();
+            LoadEntries();
+            LoadFilteredEntries();
         }
 
+        //---------------------- lokales Festlegen des Connectionstrings in Window_NewEntry für alle enthaltenen Funktionen ----------------------
         string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
 
+
+        //---------------------- Laden der Konten für Formular ----------------------
         private void LoadAccounts()
         {
             List<string> accounts = new List<string>();
@@ -58,6 +65,7 @@ namespace MartinsHaushaltsbuch
             CmbAccount.ItemsSource = accounts;
         }
 
+        //---------------------- Laden der Kategorien für Formular ----------------------
         private void LoadCategories()
         {
             List<string> categories = new List<string>();
@@ -81,6 +89,7 @@ namespace MartinsHaushaltsbuch
             CmbCategory.ItemsSource = categories;
         }
 
+        //---------------------- Laden der Einträge links im Listview ----------------------
         private void LoadEntries()
         {
             List<Entry> entries = new List<Entry>();
@@ -112,6 +121,7 @@ namespace MartinsHaushaltsbuch
             LstEntries.ItemsSource = entries;
         }
 
+        //---------------------- Öffentliche Klasse für die Einträge in der Listview ----------------------
         public class Entry
         {
             public string Titel_Buchung { get; set; }
@@ -122,26 +132,31 @@ namespace MartinsHaushaltsbuch
             public string Kommentar_Buchung { get; set; }
         }
 
+        //---------------------- Navigationsbutton Startseite ----------------------
         private void Button_MainPage_Click(object sender, RoutedEventArgs e)
         {
-            var newForm = new MainWindow();             //create your new form.
-            newForm.Show();                             //show the new form.
-            this.Close();                               //only if you want to close the current form.
+            var newForm = new MainWindow();
+            newForm.Show();
+            this.Close();
         }
+
+        //---------------------- Navigationsbutton Seite Einstellungen ----------------------
         private void Button_Settings_Click(object sender, RoutedEventArgs e)
         {
-            var newForm = new Window_Settings();             //create your new form.
-            newForm.Show();                             //show the new form.
-            this.Close();                               //only if you want to close the current form.
+            var newForm = new Window_Settings();
+            newForm.Show();
+            this.Close();
         }
 
+        //---------------------- Navigationsbutton Seite Analyse ----------------------
         private void Button_Analysis_Click(object sender, RoutedEventArgs e)
         {
-            var newForm = new Window_Analysis();             //create your new form.
-            newForm.Show();                             //show the new form.
-            this.Close();                               //only if you want to close the current form.
+            var newForm = new Window_Analysis();
+            newForm.Show();
+            this.Close();
         }
 
+        //---------------------- Button für das Speichern des neuen Eintrags oder der Änderungen ----------------------
         private void Button_Save_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -189,7 +204,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
-
+        //---------------------- Bereinigen der Felder im Formular ----------------------
         private void ClearInputFields()
         {
             TxtTitle.Text = string.Empty;
@@ -200,7 +215,7 @@ namespace MartinsHaushaltsbuch
             TxtComment.Text = string.Empty;
         }
 
-//----------------------------------------------------------- Buttons Edit, Clear und Löschen --------------------------------------------------------------------------
+        //---------------------- Button Editieren ----------------------
 
         private void Button_Edit_Click(object sender, RoutedEventArgs e)
         {
@@ -223,6 +238,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Button Löschen ----------------------
         private void Button_Delete_Click(object sender, RoutedEventArgs e)
         {
             // Überprüfe, ob ein Eintrag ausgewählt wurde
@@ -261,13 +277,13 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Button Zurücksetzen des Formulars ----------------------
         private void Button_Reset_Click(object sender, RoutedEventArgs e)
         {
             ClearInputFields();
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+        //---------------------- Laden der Konten für das Filtern im Dropdown ----------------------
         private void LoadAccountsForFiltering()
         {
             List<string> accounts = new List<string>();
@@ -292,5 +308,61 @@ namespace MartinsHaushaltsbuch
                 }
             }
         }
+
+        //---------------------- Funktion für Reaktion auf geändertes Element in Dropdown ------------------------------------------
+
+        private void CmbFilterAccount_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CmbFilterAccount.SelectedItem != null)
+            {
+                string selectedAccount = CmbFilterAccount.SelectedItem.ToString();
+                Singleton_Filter.Instance.Konto = selectedAccount;
+
+                // Lade die gefilterten Einträge basierend auf dem ausgewählten Konto
+                LoadFilteredEntries();
+            }
+        }
+
+        //---------------------- Funktion für Laden der Elemente in Listview nach Filtern in Dropdown ------------------------------------------
+
+        private void LoadFilteredEntries()
+        {
+            List<Entry> entries = new List<Entry>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung FROM TabelleBuchung";
+                    if (Singleton_Filter.Instance.Konto != "Alle Konten")
+                    {
+                        query += " WHERE Konto_Buchung = @Konto";
+                    }
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Konto", Singleton_Filter.Instance.Konto);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        entries.Add(new Entry
+                        {
+                            Titel_Buchung = reader["Titel_Buchung"].ToString(),
+                            Konto_Buchung = reader["Konto_Buchung"].ToString(),
+                            Kategorie_Buchung = reader["Kategorie_Buchung"].ToString(),
+                            Betrag_Buchung = Convert.ToDouble(reader["Betrag_Buchung"]),
+                            Datum_Buchung = Convert.ToDateTime(reader["Datum_Buchung"]),
+                            Kommentar_Buchung = reader["Kommentar_Buchung"].ToString()
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading entries: " + ex.Message);
+                }
+            }
+            LstEntries.ItemsSource = entries;
+        }
+
     }
 }

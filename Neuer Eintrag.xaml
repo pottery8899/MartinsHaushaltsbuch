@@ -65,7 +65,7 @@
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
 
         <!-- Dropdown-Menü für die Kontofilterung -->
-        <ComboBox x:Name="CmbFilterAccount" Width="150" Margin="0,40,40,0" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2">
+        <ComboBox x:Name="CmbFilterAccount" Width="150" Margin="0,40,40,0" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2" SelectionChanged="CmbFilterAccount_SelectionChanged">
         </ComboBox>
 
         <!-- Formular für den neuen Eintrag -->
