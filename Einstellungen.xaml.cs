@@ -59,7 +59,8 @@ namespace MartinsHaushaltsbuch
                     return;
                 }
 
-                string query = "INSERT INTO Tabelle_Konto (name_Konto, Kontonummer) VALUES (@Name, @Kontonummer)";
+                // Hier setzen wir gesamtsumme_Konto auf 0 direkt im INSERT-Statement
+                string query = "INSERT INTO Tabelle_Konto (name_Konto, Kontonummer, gesamtsumme_Konto) VALUES (@Name, @Kontonummer, 0)";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Name", TxtName.Text);
                 command.Parameters.AddWithValue("@Kontonummer", TxtKontonummer.Text);
@@ -82,6 +83,7 @@ namespace MartinsHaushaltsbuch
                 }
             }
         }
+
 
         private void Button_Kategorie_Save_Click(object sender, RoutedEventArgs e)
         {
@@ -137,7 +139,7 @@ namespace MartinsHaushaltsbuch
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Tabelle_Konto", conn);
+                SqlCommand cmd = new SqlCommand("SELECT name_Konto, Kontonummer, gesamtsumme_Konto FROM Tabelle_Konto", conn);
 
                 SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
                 DataTable datatable_konto = new DataTable();

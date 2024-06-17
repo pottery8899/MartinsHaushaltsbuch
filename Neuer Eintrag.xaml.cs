@@ -177,19 +177,42 @@ namespace MartinsHaushaltsbuch
                         deleteCommand.ExecuteNonQuery();
                     }
 
+                    // Multipliziere den Betrag mit -1, wenn es ein Ausgang ist
+                    double transactionAmount = Convert.ToDouble(TxtAmount.Text);
+                    if (BtnToggleTransactionType.Content.ToString() == "Ausgang")
+                    {
+                        transactionAmount *= -1;
+                    }
+
                     // Füge den neuen Eintrag hinzu
                     string insertQuery = @"INSERT INTO TabelleBuchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
-                                 VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
+                 VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
                     using (SqlCommand command = new SqlCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@Titel", TxtTitle.Text);
                         command.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
                         command.Parameters.AddWithValue("@Kategorie", CmbCategory.SelectedItem);
-                        command.Parameters.AddWithValue("@Betrag", Convert.ToDouble(TxtAmount.Text));
+                        command.Parameters.AddWithValue("@Betrag", transactionAmount); // Verwende hier den transformierten Betrag
                         command.Parameters.AddWithValue("@Datum", DpDate.SelectedDate);
                         command.Parameters.AddWithValue("@Kommentar", TxtComment.Text);
                         command.ExecuteNonQuery();
                     }
+
+                    // Abrufen der aktuellen Gesamtsumme des Kontos
+                    string selectTotalQuery = "SELECT gesamtsumme_Konto FROM Tabelle_Konto WHERE name_Konto = @Konto";
+                    SqlCommand selectTotalCommand = new SqlCommand(selectTotalQuery, connection);
+                    selectTotalCommand.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
+                    double currentTotal = Convert.ToDouble(selectTotalCommand.ExecuteScalar());
+
+                    // Hinzufügen oder Abziehen des Betrags zur Gesamtsumme des Kontos
+                    currentTotal += transactionAmount;
+
+                    // Aktualisieren der Gesamtsumme in der Tabelle_Konto
+                    string updateTotalQuery = "UPDATE Tabelle_Konto SET gesamtsumme_Konto = @Gesamtsumme WHERE name_Konto = @Konto";
+                    SqlCommand updateTotalCommand = new SqlCommand(updateTotalQuery, connection);
+                    updateTotalCommand.Parameters.AddWithValue("@Gesamtsumme", currentTotal);
+                    updateTotalCommand.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
+                    updateTotalCommand.ExecuteNonQuery();
 
                     MessageBox.Show("Eintrag erfolgreich gespeichert!", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -203,6 +226,7 @@ namespace MartinsHaushaltsbuch
                 MessageBox.Show("Fehler beim Speichern des Eintrags: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         //---------------------- Bereinigen der Felder im Formular ----------------------
         private void ClearInputFields()
@@ -362,6 +386,22 @@ namespace MartinsHaushaltsbuch
                 }
             }
             LstEntries.ItemsSource = entries;
+        }
+
+        //---------------------- Funktion für den Button Ein- und Ausgang ------------------------------------------
+
+        private void BtnToggleTransactionType_Click(object sender, RoutedEventArgs e)
+        {
+            if (BtnToggleTransactionType.Content.ToString() == "Eingang")
+            {
+                BtnToggleTransactionType.Content = "Ausgang";
+                BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffaacc"));
+            }
+            else
+            {
+                BtnToggleTransactionType.Content = "Eingang";
+                BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#ffaacc"));
+            }
         }
 
     }

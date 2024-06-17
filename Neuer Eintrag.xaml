@@ -70,6 +70,9 @@
 
         <!-- Formular für den neuen Eintrag -->
         <StackPanel Margin="0,160,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="500" Height="824">
+
+            <Button x:Name="BtnToggleTransactionType" Content="Eingang" Background="#A5D6A7" Foreground="Black" Click="BtnToggleTransactionType_Click" HorizontalAlignment="center" VerticalAlignment="Top" Margin="10, 10, 10, 10" Width="130" Height="40" FontSize="15px"/>
+
             <TextBlock HorizontalAlignment="Center" Text="Titel der Buchung" FontSize="20"/>
             <TextBox x:Name="TxtTitle" Width="500" Height="30" Margin="0,5,0,20"/>
 
@@ -87,7 +90,7 @@
 
             <TextBlock HorizontalAlignment="Center" Text="Kommentar zur Buchung" FontSize="20"/>
             <TextBox x:Name="TxtComment" Width="500" Height="100" Margin="0,5,0,20" TextWrapping="Wrap" AcceptsReturn="True"/>
-            <StackPanel Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,200,0,20">
+            <StackPanel Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,140,0,20">
                 <Button Content="Zurücksetzen" Width="130" Height="40" FontSize="15px" Margin="10" Click="Button_Reset_Click">
                     <Button.Background>
                         <SolidColorBrush Color="#E0E0E0"/>
