@@ -112,6 +112,9 @@ namespace MartinsHaushaltsbuch
                             Kommentar_Buchung = reader["Kommentar_Buchung"].ToString()
                         });
                     }
+
+                    // Sortiere die Einträge nach Datum absteigend
+                    entries = entries.OrderByDescending(e => e.Datum_Buchung).ToList();
                 }
                 catch (Exception ex)
                 {
@@ -164,6 +167,15 @@ namespace MartinsHaushaltsbuch
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
+
+                    DateTime selectedDate = DpDate.SelectedDate ?? DateTime.Now; // Default to current date if no date is selected
+
+                    // Überprüfen, ob das ausgewählte Datum in der Zukunft liegt
+                    if (selectedDate.Date > DateTime.Today)
+                    {
+                        MessageBox.Show("Das ausgewählte Datum kann nicht in der Zukunft liegen.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return; // Verhindere das Speichern der Buchung
+                    }
 
                     // Überprüfe, ob ein Eintrag bearbeitet wird
                     if (LstEntries.SelectedItem != null)
@@ -379,6 +391,9 @@ namespace MartinsHaushaltsbuch
                             Kommentar_Buchung = reader["Kommentar_Buchung"].ToString()
                         });
                     }
+
+                    // Sortiere die Einträge nach Datum absteigend
+                    entries = entries.OrderByDescending(e => e.Datum_Buchung).ToList();
                 }
                 catch (Exception ex)
                 {
