@@ -93,7 +93,7 @@
             </TabControl.Resources>
 
 
-            <!-- Tabs für Konten -->
+            <!-- Tab zum Konto anlegen -->
             <TabItem Header="Konto anlegen">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -113,6 +113,7 @@
                 </Grid>
             </TabItem>
 
+            <!-- Tab zum Konto bearbeiten -->
             <TabItem Header="Konten bearbeiten">
                 <Grid>
                     <StackPanel Margin="10">
@@ -120,6 +121,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="0,10,0,10" Padding="10" BorderThickness="0">
+                                        <!-- Ab hier Anzeigen der angelegten Konten -->
                                         <StackPanel HorizontalAlignment="Center">
                                             <TextBlock Text="{Binding name_Konto}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
                                             <TextBlock Text="{Binding Kontonummer}" FontSize="16" HorizontalAlignment="Center" Margin="5"/>
@@ -133,20 +135,24 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <!-- Divider -->
+                        <!-- Horiziontaler Trennstrich -->
                         <Separator Margin="200,20,200,20" />
 
+                        <!-- Eingabefeld für Kontonamen -->
                         <TextBlock Text="Name des Kontos" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtNameBearbeiten" Width="300" Height="30" Margin="0 0 0 10"/>
 
+                        <!-- Eingabefeld für Kontonr. -->
                         <TextBlock Text="Kontonummer:" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtKontonummerBearbeiten" Width="300" Height="30" Margin="0 0 0 10"/>
 
+                        <!-- Button zum Speichern-->
                         <Button Content="Speichern" Width="120" Height="40" FontSize="16" Margin="20" Click="Button_SaveChanges_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
+            <!-- Tab zum Konto löschen -->
             <TabItem Header="Konto löschen">
                 <Grid>
                     <StackPanel Margin="10">
@@ -154,6 +160,7 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="0,10,0,10" Padding="10" BorderThickness="0">
+                                        <!-- Ab hier Anzeige der angelegten Konten in Liste -->
                                         <StackPanel HorizontalAlignment="Center">
                                             <TextBlock Text="{Binding name_Konto}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
                                             <TextBlock Text="{Binding Kontonummer}" FontSize="16" HorizontalAlignment="Center" Margin="5"/>
@@ -164,32 +171,37 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <!-- Divider -->
+                        <!-- Trennstrich -->
                         <Separator Margin="200,20,200,20" />
 
+                        <!-- Button zum Löschen eines Kontos -->
                         <Button Content="Konto löschen" Width="200" Height="40" FontSize="16" Click="Button_Delete_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
-            <!-- Tabs für Kategorien -->
+            <!-- Tab zum Kategorie anlegen -->
             <TabItem Header="Kategorie anlegen">
                 <Grid>
                     <StackPanel Margin="10,10,10,10">
+                        <!-- Texteingabe für Kategoriename -->
                         <TextBlock Text="Name der Kategorie" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtNameKategorie" Width="300" Height="30" Margin="0 0 0 10"/>
 
+                        <!-- Speichern-Button -->
                         <Button Content="Speichern" Width="120" Height="40" FontSize="16" Margin="20" Click="Button_Kategorie_Save_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
+            <!-- Tab zum Bearbeiten einer Kategorie -->
             <TabItem Header="Kategorien bearbeiten">
                 <Grid>
                     <StackPanel Margin="10">
                         <ListBox x:Name="ListBoxKategorieBearbeiten" Height="400" SelectionChanged="ListBoxKategorieBearbeiten_SelectionChanged" Margin="0,0,0,10">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
+                                    <!-- Anzeige der Kategorien -->
                                     <Border Margin="0,10,0,10" Padding="10" BorderThickness="0">
                                         <StackPanel HorizontalAlignment="Center">
                                             <TextBlock Text="{Binding nameKategorie}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
@@ -199,23 +211,27 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <!-- Divider -->
+                        <!-- Trennstrich -->
                         <Separator Margin="200,20,200,20" />
 
+                        <!-- Eingabefeld für Kategoriename -->
                         <TextBlock Text="Name der Kategorie" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtNameKategorieBearbeiten" Width="300" Height="30" Margin="0 0 0 10"/>
 
+                        <!-- Button zum Speichern-->
                         <Button Content="Speichern" Width="120" Height="40" FontSize="16" Margin="20" Click="Button_SaveChanges_Kategorie_Click"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
+            <!-- Tab zum Löschen einer Kategorie -->
             <TabItem Header="Kategorie löschen">
                 <Grid>
                     <StackPanel Margin="10">
                         <ListBox x:Name="ListBoxKategorie" Height="400" Loaded="Window_Settings_Load" Margin="0,0,0,10">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
+                                    <!-- Anzeige der Kategorien -->
                                     <Border Margin="0,10,0,10" Padding="10" BorderThickness="0">
                                         <StackPanel HorizontalAlignment="Center">
                                             <TextBlock Text="{Binding nameKategorie}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="5"/>
@@ -225,9 +241,10 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <!-- Divider -->
+                        <!-- Trennstrich -->
                         <Separator Margin="200,20,200,20" />
 
+                        <!-- Button zum löschen einer Kategorie-->
                         <Button Content="Kategorie löschen" Width="200" Height="40" FontSize="16" Click="Button_Delete_Kategorie_Click"/>
                     </StackPanel>
                 </Grid>

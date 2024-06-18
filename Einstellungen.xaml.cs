@@ -11,11 +11,13 @@ namespace MartinsHaushaltsbuch
 {
     public partial class Window_Settings : MetroWindow
     {
+        //---------------------- Initialisieren der Seite ----------------------
         public Window_Settings()
         {
             InitializeComponent();
         }
 
+        //---------------------- Navigation auf Startseite ----------------------
         private void Button_MainPage_Click(object sender, RoutedEventArgs e)
         {
             var newForm = new MainWindow();
@@ -23,6 +25,7 @@ namespace MartinsHaushaltsbuch
             this.Close();
         }
 
+        //---------------------- Navigation auf Seite "Analyse" ----------------------
         private void Button_Analysis_Click(object sender, RoutedEventArgs e)
         {
             var newForm = new Window_Analysis();
@@ -30,6 +33,7 @@ namespace MartinsHaushaltsbuch
             this.Close();
         }
 
+        //---------------------- Navigation auf Seite "Buchungen" ----------------------
         private void Button_NewEntry_Click(object sender, RoutedEventArgs e)
         {
             var newForm = new Window_NewEntry();
@@ -37,6 +41,7 @@ namespace MartinsHaushaltsbuch
             this.Close();
         }
 
+        //---------------------- Funktion die hinter dem Speichern-Button des Kontos liegt, Speichert Informationen in DB ----------------------
         private void Button_Save_Click(object sender, RoutedEventArgs e)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
@@ -59,7 +64,8 @@ namespace MartinsHaushaltsbuch
                     return;
                 }
 
-                // Hier setzen wir gesamtsumme_Konto auf 0 direkt im INSERT-Statement
+                // Hier setzen wir gesamtsumme_Konto auf 0 direkt im INSERT-Statement, damit später keine Felder mit einem NULL-Eintrag in der DB entstehen
+                //Außerdem ist so der Wert in der Liste unter "Konto bearbeiten" direkt anzeigbar, nämlich als initial "0€"
                 string query = "INSERT INTO Tabelle_Konto (name_Konto, Kontonummer, gesamtsumme_Konto) VALUES (@Name, @Kontonummer, 0)";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Name", TxtName.Text);
@@ -84,7 +90,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
-
+        //---------------------- Funktion die hinter dem Button für das Speichern einer neuen Kategorie liegt ----------------------
         private void Button_Kategorie_Save_Click(object sender, RoutedEventArgs e)
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
@@ -128,12 +134,14 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Lädt die Listen für Kategorien und Konten neu, bswp. wenn ein neues Konto erstellt wurde ----------------------
         private void Window_Settings_Load(object sender, RoutedEventArgs e)
         {
             Load_List_Konten();
             Load_List_Kategorie();
         }
 
+        //---------------------- Lädt die Liste der Konten aus der Datenbank für die Anzeige in der Listview ----------------------
         private void Load_List_Konten()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
@@ -150,6 +158,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Lädt die Liste der Kategorien für die Anzeige in der Listview ----------------------
         private void Load_List_Kategorie()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
@@ -166,6 +175,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Funktion die aufgerufen wird, wenn in der Liste mit den Konten ein anderes Item ausgewählt wird ----------------------
         private void ListBoxKontenBearbeiten_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ListBoxKontenBearbeiten.SelectedItem != null)
@@ -176,6 +186,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Funktion die aufgerufen wird, wenn in der Liste mit den Kategorien ein anderes Item ausgewählt wird ----------------------
         private void ListBoxKategorieBearbeiten_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ListBoxKategorieBearbeiten.SelectedItem != null)
@@ -185,6 +196,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Löschen-Button unter "Konto löschen"  ----------------------
         private void Button_Delete_Click(object sender, RoutedEventArgs e)
         {
             if (ListBoxKonten.SelectedItem != null)
@@ -219,6 +231,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Löschen-Button für Kategorien ----------------------
         private void Button_Delete_Kategorie_Click(object sender, RoutedEventArgs e)
         {
             if (ListBoxKategorie.SelectedItem != null)
@@ -253,6 +266,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Funktion für das Speichern von Änderungen an Kontoeinträgen ----------------------
         private void Button_SaveChanges_Click(object sender, RoutedEventArgs e)
         {
             if (ListBoxKontenBearbeiten.SelectedItem != null)
@@ -293,6 +307,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
+        //---------------------- Funktion für Speichern von Änderungen an Kategorien ----------------------
         private void Button_SaveChanges_Kategorie_Click(object sender, RoutedEventArgs e)
         {
             if (ListBoxKategorieBearbeiten.SelectedItem != null)
