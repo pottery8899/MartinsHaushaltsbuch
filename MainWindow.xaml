@@ -17,24 +17,12 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
-        <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
-        <Button Content="Button" VerticalAlignment="Top" HorizontalAlignment="Center" Height="100" Margin="0,300,0,0" Width="500">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#156082"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
-            <Button.BorderBrush>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#156082"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.BorderBrush>
-        </Button>
-        <Button
 
-    Width="500" VerticalAlignment="Top" Margin="0,300,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Buchungen" Click="Button_NewEntry_Click">
+        <!-- Logo oben in der Ecke -->
+        <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
+
+        <!-- Formatierung des Buttons "Buchungen" -->
+        <Button Width="500" VerticalAlignment="Top" Margin="0,300,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Buchungen" Click="Button_NewEntry_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.8,1" StartPoint="0.8,0">
                     <GradientStop Color="#156082"/>
@@ -48,8 +36,10 @@
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <Button
-    Width="500" VerticalAlignment="Top" Margin="0,500,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Analyse" Click="Button_Analysis_Click">
+
+
+        <!-- Formatierung des Buttons "Analyse" -->
+        <Button Width="500" VerticalAlignment="Top" Margin="0,500,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Analyse" Click="Button_Analysis_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>
@@ -63,8 +53,9 @@
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <Button
-Width="500" VerticalAlignment="Top" Margin="0,700,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Einstellungen" Click="Button_Settings_Click">
+
+        <!-- Formatierung des Buttons "Einstellungen" -->
+        <Button Width="500" VerticalAlignment="Top" Margin="0,700,0,0" Height="100" HorizontalAlignment="Center" FontSize="30px" Content="Einstellungen" Click="Button_Settings_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>
@@ -78,7 +69,7 @@ Width="500" VerticalAlignment="Top" Margin="0,700,0,0" Height="100" HorizontalAl
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <TextBlock Margin="0,1000,0,0" Width="300" Height="200" FontSize="30px" FontWeight="Bold" Text="{Binding Datum}">
-        </TextBlock>
+        <!-- Probehalber eingefügtes Datum für den Test des Singleton -->
+        <!-- TextBlock Margin="0,1000,0,0" Width="300" Height="200" FontSize="30px" FontWeight="Bold" Text="{Binding Datum}" -->
     </Grid>
 </mah:MetroWindow>
