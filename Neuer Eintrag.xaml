@@ -20,6 +20,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <!-- Buttons für die Navigation und das Logo der Anwendung -->
         <Button Width="130" VerticalAlignment="Top" Margin="170,20,0,0" Height="30" HorizontalAlignment="left" FontSize="15px" Content="Startseite" Click="Button_MainPage_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -71,25 +72,34 @@
         <!-- Formular für den neuen Eintrag -->
         <StackPanel Margin="0,160,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="500" Height="824">
 
+            <!-- Toggle für Ein- und Ausgang -->
             <Button x:Name="BtnToggleTransactionType" Content="Eingang" Background="#A5D6A7" Foreground="Black" Click="BtnToggleTransactionType_Click" HorizontalAlignment="center" VerticalAlignment="Top" Margin="10, 10, 10, 10" Width="130" Height="40" FontSize="15px"/>
 
+            <!-- Eingabefeld Titel -->
             <TextBlock HorizontalAlignment="Center" Text="Titel der Buchung" FontSize="20"/>
             <TextBox x:Name="TxtTitle" Width="500" Height="30" Margin="0,5,0,20"/>
 
+            <!-- Auswahlfeld Konto, wird aus der Datenbank entnommen -->
             <TextBlock HorizontalAlignment="Center" Text="Konto der Buchung" FontSize="20"/>
             <ComboBox x:Name="CmbAccount" Width="500" Height="30" Margin="0,5,0,20"/>
 
+            <!-- Auswahlfeld Kategorie, wird ebenfalls aus der Datenbank entnommen -->
             <TextBlock HorizontalAlignment="Center" Text="Kategorie der Buchung" FontSize="20"/>
             <ComboBox x:Name="CmbCategory" Width="500" Height="30" Margin="0,5,0,20"/>
 
+            <!-- Betrag, aufgrund der hinterliegenden Logik ist es egal, ob er mit "." oder "," eingegeben wird -->
             <TextBlock HorizontalAlignment="Center" Text="Betrag der Buchung" FontSize="20"/>
             <TextBox x:Name="TxtAmount" Width="500" Height="30" Margin="0,5,0,20"/>
 
+            <!-- Datum der Buchung, aufgrund der hinterliegenden Logik wird eine Fehlermeldung ausgegeben, wenn es in der Zukunft liegt -->
             <TextBlock HorizontalAlignment="Center" Text="Datum der Buchung" FontSize="20"/>
             <DatePicker x:Name="DpDate" Width="500" Height="30" Margin="0,5,0,20"/>
 
+            <!-- Eingabefeld für einen Kommentar -->
             <TextBlock HorizontalAlignment="Center" Text="Kommentar zur Buchung" FontSize="20"/>
             <TextBox x:Name="TxtComment" Width="500" Height="100" Margin="0,5,0,20" TextWrapping="Wrap" AcceptsReturn="True"/>
+
+            <!-- Buttons zum Speichern der Eingaben und Zurücksetzen / Leeren des Formulars -->
             <StackPanel Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,140,0,20">
                 <Button Content="Zurücksetzen" Width="130" Height="40" FontSize="15px" Margin="10" Click="Button_Reset_Click">
                     <Button.Background>
@@ -105,10 +115,10 @@
         </StackPanel>
 
 
-        <!-- Center Divider -->
+        <!-- Teilstrich in der Mitte -->
         <Border Grid.Column="1" Margin="0,100" Background="Gray" Width="2"/>
 
-        <!-- Right Side: ListBox -->
+        <!-- Rechte Seite: ListBox für die Anzeige der getätigten Buchungen -->
         <ListBox x:Name="LstEntries" Grid.Column="2" Margin="0,160,0,200" HorizontalAlignment="Center" FontSize="15px" Width="700px" SelectionMode="Single"
          SelectedItem="{Binding SelectedEntry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ListBox.ItemTemplate>
@@ -131,6 +141,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
+        <!-- Die beiden Buttons zum Bearbeiten oder Löschen des ausgewählten Eintrags -->
         <StackPanel Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,100">
             <Button Content="Bearbeiten" Width="130" Height="40" FontSize="15px" Margin="10" Click="Button_Edit_Click">
                 <Button.Background>
