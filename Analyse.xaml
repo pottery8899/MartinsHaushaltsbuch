@@ -57,10 +57,11 @@
         </Button>
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
 
-        <!-- Auflistung der Konten -->
+        <!-- Dynamische ListBox fuer die Konten -->
         <ListBox x:Name="ListBoxKonten" ItemsSource="{Binding KontenListe}" Margin="10, 200, 10, 650" HorizontalAlignment="Center"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                 SelectionChanged="ListBoxKonten_SelectionChanged">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
@@ -82,6 +83,10 @@
 
         <!-- Horiziontaler Trennstrich -->
         <Separator Margin="200,-401,200,20" />
+
+        <!-- Anzeige des ausgewaehlten Kontos aus dem Singleton -->
+        <TextBlock Text="{Binding Instance.Konto, Source={x:Static local:Singleton_Filter.Instance}}" 
+           HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Margin="0,20,0,0" />
 
     </Grid>
 </mah:MetroWindow>

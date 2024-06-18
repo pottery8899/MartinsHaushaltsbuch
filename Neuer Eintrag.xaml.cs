@@ -29,7 +29,7 @@ namespace MartinsHaushaltsbuch
 
         private void Window_NewEntry_Loaded(object sender, RoutedEventArgs e)
         {
-            Singleton_Filter.Instance.Konto = "Alle Konten"; // Setzen des Standardwerts
+            //Singleton_Filter.Instance.Konto = "Alle Konten"; // Setzen des Standardwerts
             LoadAccounts();
             LoadCategories();
             LoadAccountsForFiltering();
