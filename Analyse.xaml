@@ -82,7 +82,7 @@
         </ListBox>
 
         <!-- Horiziontaler Trennstrich -->
-        <Separator Margin="200,-401,200,20" />
+        <Separator Margin="200, 321, 200, 20" VerticalAlignment="Top"/>
 
         <!-- Anzeige des ausgewaehlten Kontos aus dem Singleton -->
         <TextBlock Text="{Binding Instance.Konto, Source={x:Static local:Singleton_Filter.Instance}}" 
