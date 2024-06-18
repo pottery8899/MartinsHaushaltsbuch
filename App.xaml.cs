@@ -15,10 +15,9 @@ namespace MartinsHaushaltsbuch
     {
     }
 
-    /// <summary>
     ///  Singleton für die globale Verwendung von Filtern. Soll beim Start der App auf bestimmte Default-Werte gesetzt und später vom Nutzer beliebig angepasst werden, 
     ///  woraufhin die Analysen und Diagramme neu berechnet werden.
-    /// </summary>
+
     public class Singleton_Filter : Page, INotifyPropertyChanged
     {
         private static Singleton_Filter instance;
@@ -29,10 +28,10 @@ namespace MartinsHaushaltsbuch
         private string _einausgang;
         private int _id;
 
-        // Private constructor to prevent direct instantiation
+        // Privater Kontruktor für Singleton
         private Singleton_Filter() { }
 
-        // Static property to provide access to the single instance
+        // Statische Eigenschaft für den Zugriff auf die einzelne Instanz
         public static Singleton_Filter Instance
         {
             get
@@ -45,7 +44,7 @@ namespace MartinsHaushaltsbuch
             }
         }
 
-        // Properties with PropertyChanged event invocation
+        // Eigenschaften mit PropertyChanged-Ereignisaufruf
         public string Konto
         {
             get => _konto;
