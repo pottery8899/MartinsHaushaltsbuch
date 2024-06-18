@@ -96,7 +96,12 @@
             <!-- Tabs für Konten -->
             <TabItem Header="Konto anlegen">
                 <Grid>
-                    <StackPanel Margin="10,10,10,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="133*"/>
+                        <ColumnDefinition Width="16*"/>
+                        <ColumnDefinition Width="1319*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="10,10,10,10" Grid.ColumnSpan="3">
                         <TextBlock Text="Name des Kontos" FontSize="20px" Margin="0 20 0 10" TextElement.Foreground="Black" HorizontalAlignment="Center"/>
                         <TextBox x:Name="TxtName" Width="300" Height="30" Margin="0 0 0 10"/>
 

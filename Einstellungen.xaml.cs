@@ -277,6 +277,8 @@ namespace MartinsHaushaltsbuch
                         connection.Open();
                         command.ExecuteNonQuery();
                         MessageBox.Show("Konto erfolgreich aktualisiert.");
+                        TxtNameBearbeiten.Text = string.Empty;
+                        TxtKontonummerBearbeiten.Text = string.Empty;
                         Load_List_Konten();
                     }
                     catch (Exception ex)
