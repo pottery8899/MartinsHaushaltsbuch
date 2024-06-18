@@ -10,10 +10,9 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         WindowStyle="None"
-        Topmost="True"
-        >
+        Topmost="False">
     <Grid>
-        <Button Width="130" VerticalAlignment="Top" Margin="170,20,0,0" Height="30" HorizontalAlignment="left" FontSize="15px" Content="Startseite" Click="Button_MainPage_Click">
+        <Button Width="130" VerticalAlignment="Top" Margin="170,20,0,0" Height="30" HorizontalAlignment="Left" FontSize="15px" Content="Startseite" Click="Button_MainPage_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>
@@ -27,7 +26,7 @@
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <Button Width="130" VerticalAlignment="Top" Margin="320,20,0,0" Height="30" HorizontalAlignment="left" FontSize="15px" Content="Buchungen" Click="Button_NewEntry_Click">
+        <Button Width="130" VerticalAlignment="Top" Margin="320,20,0,0" Height="30" HorizontalAlignment="Left" FontSize="15px" Content="Buchungen" Click="Button_NewEntry_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>
@@ -41,7 +40,7 @@
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <Button Width="130" VerticalAlignment="Top" Margin="470,20,0,0" Height="30" HorizontalAlignment="left" FontSize="15px" Content="Einstellungen" Click="Button_Settings_Click">
+        <Button Width="130" VerticalAlignment="Top" Margin="470,20,0,0" Height="30" HorizontalAlignment="Left" FontSize="15px" Content="Einstellungen" Click="Button_Settings_Click">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#156082"/>
@@ -56,6 +55,31 @@
             </Button.BorderBrush>
         </Button>
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
-        <Button VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" Height="200" Content="Analyse"></Button>
+
+        <ListBox x:Name="ListBoxKonten" ItemsSource="{Binding KontenListe}" Margin="10, 200, 10, 650" HorizontalAlignment="Center"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="100, 0, 100, 0" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding name_Konto}" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Kontonummer}" FontSize="16"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding gesamtsumme_Konto}" FontWeight="Bold" FontSize="16"/>
+                            <TextBlock Text="&#8364;" FontSize="16"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Horiziontaler Trennstrich -->
+        <Separator Margin="200,-401,200,20" />
+
     </Grid>
 </mah:MetroWindow>
