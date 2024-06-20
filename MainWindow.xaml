@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         WindowStyle="None"
-        Topmost="True"
+        Topmost="False"
         >
     <Grid>
         <Grid.ColumnDefinitions>

@@ -3,7 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -63,10 +63,10 @@ namespace MartinsHaushaltsbuch
 
             // Hier fügst du die dynamischen Konten hinzu (aus der Datenbank oder anderer Datenquelle)
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("SELECT name_Konto, Kontonummer, gesamtsumme_Konto FROM Tabelle_Konto", conn);
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                SQLiteCommand cmd = new SQLiteCommand("SELECT name_Konto, Kontonummer, gesamtsumme_Konto FROM Konto", conn);
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(cmd);
                 DataTable datatable_konto = new DataTable();
                 dataAdapter.Fill(datatable_konto);
 
@@ -91,10 +91,10 @@ namespace MartinsHaushaltsbuch
 
             // Verbindung zur Datenbank herstellen und die Summe abrufen
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
                 conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT SUM(gesamtsumme_Konto) FROM Tabelle_Konto", conn);
+                SQLiteCommand cmd = new SQLiteCommand("SELECT SUM(gesamtsumme_Konto) FROM Konto", conn);
                 object result = cmd.ExecuteScalar();
                 if (result != null && result != DBNull.Value)
                 {

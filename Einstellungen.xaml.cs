@@ -2,7 +2,7 @@
 using System;
 using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
@@ -46,17 +46,17 @@ namespace MartinsHaushaltsbuch
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-
+                
                 // Überprüfen, ob Konto bereits existiert
-                string checkQuery = "SELECT COUNT(*) FROM Tabelle_Konto WHERE name_Konto = @Name OR Kontonummer = @Kontonummer";
-                SqlCommand checkCommand = new SqlCommand(checkQuery, connection);
+                string checkQuery = "SELECT COUNT(*) FROM Konto WHERE name_Konto = @Name OR Kontonummer = @Kontonummer";
+                SQLiteCommand checkCommand = new SQLiteCommand(checkQuery, connection);
                 checkCommand.Parameters.AddWithValue("@Name", TxtName.Text);
                 checkCommand.Parameters.AddWithValue("@Kontonummer", TxtKontonummer.Text);
 
-                int count = (int)checkCommand.ExecuteScalar();
+                Int64 count = (Int64)checkCommand.ExecuteScalar();
 
                 if (count > 0)
                 {
@@ -66,8 +66,8 @@ namespace MartinsHaushaltsbuch
 
                 // Hier setzen wir gesamtsumme_Konto auf 0 direkt im INSERT-Statement, damit später keine Felder mit einem NULL-Eintrag in der DB entstehen
                 //Außerdem ist so der Wert in der Liste unter "Konto bearbeiten" direkt anzeigbar, nämlich als initial "0€"
-                string query = "INSERT INTO Tabelle_Konto (name_Konto, Kontonummer, gesamtsumme_Konto) VALUES (@Name, @Kontonummer, 0)";
-                SqlCommand command = new SqlCommand(query, connection);
+                string query = "INSERT INTO Konto (name_Konto, Kontonummer, gesamtsumme_Konto) VALUES (@Name, @Kontonummer, 0)";
+                SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@Name", TxtName.Text);
                 command.Parameters.AddWithValue("@Kontonummer", TxtKontonummer.Text);
 
@@ -95,16 +95,16 @@ namespace MartinsHaushaltsbuch
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
 
                 // Überprüfen, ob Kategorie bereits existiert
-                string checkQuery = "SELECT COUNT(*) FROM TabelleKategorie WHERE nameKategorie = @Name";
-                SqlCommand checkCommand = new SqlCommand(checkQuery, connection);
+                string checkQuery = "SELECT COUNT(*) FROM Kategorie WHERE nameKategorie = @Name";
+                SQLiteCommand checkCommand = new SQLiteCommand(checkQuery, connection);
                 checkCommand.Parameters.AddWithValue("@Name", TxtNameKategorie.Text);
 
-                int count = (int)checkCommand.ExecuteScalar();
+                Int64 count = (Int64)checkCommand.ExecuteScalar();
 
                 if (count > 0)
                 {
@@ -112,8 +112,8 @@ namespace MartinsHaushaltsbuch
                     return;
                 }
 
-                string query = "INSERT INTO TabelleKategorie (nameKategorie) VALUES (@Name)";
-                SqlCommand command = new SqlCommand(query, connection);
+                string query = "INSERT INTO Kategorie (nameKategorie) VALUES (@Name)";
+                SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@Name", TxtNameKategorie.Text);
 
                 try
@@ -145,11 +145,11 @@ namespace MartinsHaushaltsbuch
         private void Load_List_Konten()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("SELECT name_Konto, Kontonummer, gesamtsumme_Konto FROM Tabelle_Konto", conn);
-
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                SQLiteCommand cmd = new SQLiteCommand("SELECT name_Konto, Kontonummer, gesamtsumme_Konto FROM Konto", conn);
+                
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(cmd);
                 DataTable datatable_konto = new DataTable();
                 dataAdapter.Fill(datatable_konto);
 
@@ -162,11 +162,11 @@ namespace MartinsHaushaltsbuch
         private void Load_List_Kategorie()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM TabelleKategorie", conn);
+                SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Kategorie", conn);
 
-                SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(cmd);
                 DataTable datatable_kategorie = new DataTable();
                 dataAdapter.Fill(datatable_kategorie);
 
@@ -205,11 +205,11 @@ namespace MartinsHaushaltsbuch
                 string kontonummer = selectedRow["Kontonummer"].ToString();
 
                 string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    string query = "DELETE FROM Tabelle_Konto WHERE Kontonummer = @Kontonummer";
+                    string query = "DELETE FROM Konto WHERE Kontonummer = @Kontonummer";
 
-                    SqlCommand command = new SqlCommand(query, connection);
+                    SQLiteCommand command = new SQLiteCommand(query, connection);
                     command.Parameters.AddWithValue("@Kontonummer", kontonummer);
 
                     try
@@ -240,11 +240,11 @@ namespace MartinsHaushaltsbuch
                 string kategorie = selectedRow["IdKategorie"].ToString();
 
                 string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    string query = "DELETE FROM TabelleKategorie WHERE IdKategorie = @KategorieID";
+                    string query = "DELETE FROM Kategorie WHERE IdKategorie = @KategorieID";
 
-                    SqlCommand command = new SqlCommand(query, connection);
+                    SQLiteCommand command = new SQLiteCommand(query, connection);
                     command.Parameters.AddWithValue("@KategorieID", kategorie);
 
                     try
@@ -277,11 +277,11 @@ namespace MartinsHaushaltsbuch
                 string newKontonummer = TxtKontonummerBearbeiten.Text;
 
                 string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    string query = "UPDATE Tabelle_Konto SET name_Konto = @Name, Kontonummer = @Kontonummer WHERE Kontonummer = @OriginalKontonummer";
+                    string query = "UPDATE Konto SET name_Konto = @Name, Kontonummer = @Kontonummer WHERE Kontonummer = @OriginalKontonummer";
 
-                    SqlCommand command = new SqlCommand(query, connection);
+                    SQLiteCommand command = new SQLiteCommand(query, connection);
                     command.Parameters.AddWithValue("@Name", newName);
                     command.Parameters.AddWithValue("@Kontonummer", newKontonummer);
                     command.Parameters.AddWithValue("@OriginalKontonummer", originalKontonummer);
@@ -317,11 +317,11 @@ namespace MartinsHaushaltsbuch
                 string newName = TxtNameKategorieBearbeiten.Text;
 
                 string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
-                    string query = "UPDATE TabelleKategorie SET nameKategorie = @NameKategorie WHERE IdKategorie = @IdKategorie";
+                    string query = "UPDATE Kategorie SET nameKategorie = @NameKategorie WHERE IdKategorie = @IdKategorie";
 
-                    SqlCommand command = new SqlCommand(query, connection);
+                    SQLiteCommand command = new SQLiteCommand(query, connection);
                     command.Parameters.AddWithValue("@NameKategorie", newName);
                     command.Parameters.AddWithValue("@IdKategorie", originalKategorie);
 

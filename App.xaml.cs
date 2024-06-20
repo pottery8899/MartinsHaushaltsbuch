@@ -5,7 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Data.SqlClient;
+using System.Data.SQLite;
+using System.IO;
+using System.Windows.Shapes;
+using System.Windows.Input;
 
 
 namespace MartinsHaushaltsbuch
@@ -16,12 +19,92 @@ namespace MartinsHaushaltsbuch
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            
+
+            // Bauen eines individuellen Pfades
+            string documentsPath = Directory.GetCurrentDirectory();
+            string relativePath = @"Datenbank\dbHaushaltsbuch.sqlite";
+            // Setzen des DataDirectory auf das Verzeichnis, das die Datenbankdatei enthält
+
+            //Vollständige Pfad
+            string fullPath = System.IO.Path.Combine(documentsPath, relativePath);
+
+            string directoryPath = documentsPath + @"\Datenbank";
+
+            // Erstellen des Ordners wenn noch nicht vorhanden
+            if (!Directory.Exists(directoryPath))
+            { 
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            // Festlegen connection string
+            string connectionString = @$"Data Source = {fullPath}";
+
+            // Prüfen auf Vorhandensein der Datenbank, alternativ Neuerstellen
+            if (!System.IO.File.Exists(fullPath))
+            {
+                SQLiteConnection.CreateFile(fullPath);                          
+
+                using (var sqlite2 = new SQLiteConnection(connectionString))
+                {
+                    sqlite2.Open();
+
+                    //string sql = "create table highscores (name varchar(20), score int)";
+
+                    string sqlKat = "CREATE TABLE [Kategorie]" + "(" +
+                        "[IdKategorie] INTEGER PRIMARY KEY," +
+                        "[nameKategorie] NVARCHAR (50) NULL)";
+                    string sqlKonto = "CREATE TABLE [Konto] (" +
+                        "[Id_Konto] INTEGER PRIMARY KEY," +
+                        "[name_Konto] NVARCHAR (50) NULL, " +
+                        "[gesamtsumme_Konto] FLOAT (53) NULL," +
+                        "[Kontonummer] NVARCHAR (50) NULL)";
+                    string sqlBuchung = "CREATE TABLE [Buchung] (" +
+                        "[Id_Buchung] INTEGER PRIMARY KEY," +
+                        "[Titel_Buchung] NVARCHAR (50) NULL," +
+                        "[Konto_Buchung] NVARCHAR (50) NULL," +
+                        "[Kategorie_Buchung] NVARCHAR (50) NULL," +
+                        "[Betrag_Buchung] FLOAT (53) NULL," +
+                        "[Datum_Buchung] DATE NULL," +
+                        "[Kommentar_Buchung] NVARCHAR (50) NULL)";
+
+                    SQLiteCommand commandKat = new SQLiteCommand(sqlKat, sqlite2);
+                    SQLiteCommand commandKonto = new SQLiteCommand(sqlKonto, sqlite2);
+                    SQLiteCommand commandBuchung = new SQLiteCommand(sqlBuchung, sqlite2);
+                    commandKat.ExecuteNonQuery();
+                    commandKonto.ExecuteNonQuery();
+                    commandBuchung.ExecuteNonQuery();
+                }
+            }     
+                     
+            SaveConnectionString("HaushaltsbuchDB", connectionString);
+
             // Setzen des Standardwerts
             Singleton_Filter.Instance.Konto = "Alle Konten";
         }
+
+        private void SaveConnectionString(string name, string connectionString)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            ConnectionStringsSection section = config.ConnectionStrings;
+
+            if (section.ConnectionStrings[name] != null)
+            {
+                section.ConnectionStrings[name].ConnectionString = connectionString;
+            }
+            else
+            {
+                section.ConnectionStrings.Add(new ConnectionStringSettings(name, connectionString));
+            }
+
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("connectionStrings");
+        }
+
     }
 
-    
+
 
     //  Singleton für die globale Verwendung von Filtern. Soll beim Start der App auf bestimmte Default-Werte gesetzt und später vom Nutzer beliebig angepasst werden, 
     //  woraufhin die Analysen und Diagramme neu berechnet werden.

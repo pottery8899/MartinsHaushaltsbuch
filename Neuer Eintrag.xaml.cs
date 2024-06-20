@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
-using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Configuration;
 
 namespace MartinsHaushaltsbuch
@@ -40,18 +40,18 @@ namespace MartinsHaushaltsbuch
         //---------------------- lokales Festlegen des Connectionstrings in Window_NewEntry für alle enthaltenen Funktionen ----------------------
         string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
 
-
+        
         //---------------------- Laden der Konten für Formular ----------------------
         private void LoadAccounts()
         {
             List<string> accounts = new List<string>();
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
                 try
-                {
-                    conn.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT name_Konto FROM Tabelle_Konto", conn);
-                    SqlDataReader reader = cmd.ExecuteReader();
+                {                    
+                    conn.Open();                    
+                    SQLiteCommand cmd = new SQLiteCommand("SELECT name_Konto FROM Konto", conn);
+                    SQLiteDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         accounts.Add(reader["name_Konto"].ToString());
@@ -69,13 +69,13 @@ namespace MartinsHaushaltsbuch
         private void LoadCategories()
         {
             List<string> categories = new List<string>();
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT nameKategorie FROM TabelleKategorie", conn);
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    SQLiteCommand cmd = new SQLiteCommand("SELECT nameKategorie FROM Kategorie", conn);
+                    SQLiteDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         categories.Add(reader["nameKategorie"].ToString());
@@ -93,13 +93,13 @@ namespace MartinsHaushaltsbuch
         private void LoadEntries()
         {
             List<Entry> entries = new List<Entry>();
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung FROM TabelleBuchung", conn);
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    SQLiteCommand cmd = new SQLiteCommand("SELECT Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung FROM Buchung", conn);
+                    SQLiteDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         entries.Add(new Entry
@@ -164,7 +164,7 @@ namespace MartinsHaushaltsbuch
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
 
@@ -183,8 +183,8 @@ namespace MartinsHaushaltsbuch
                         Entry selectedEntry = (Entry)LstEntries.SelectedItem;
 
                         // Lösche den alten Eintrag
-                        string deleteQuery = "DELETE FROM TabelleBuchung WHERE Titel_Buchung = @Titel";
-                        SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection);
+                        string deleteQuery = "DELETE FROM Buchung WHERE Titel_Buchung = @Titel";
+                        SQLiteCommand deleteCommand = new SQLiteCommand(deleteQuery, connection);
                         deleteCommand.Parameters.AddWithValue("@Titel", selectedEntry.Titel_Buchung);
                         deleteCommand.ExecuteNonQuery();
                     }
@@ -197,9 +197,9 @@ namespace MartinsHaushaltsbuch
                     }
 
                     // Füge den neuen Eintrag hinzu
-                    string insertQuery = @"INSERT INTO TabelleBuchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
+                    string insertQuery = @"INSERT INTO Buchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
                  VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
-                    using (SqlCommand command = new SqlCommand(insertQuery, connection))
+                    using (SQLiteCommand command = new SQLiteCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@Titel", TxtTitle.Text);
                         command.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
@@ -211,17 +211,17 @@ namespace MartinsHaushaltsbuch
                     }
 
                     // Abrufen der aktuellen Gesamtsumme des Kontos
-                    string selectTotalQuery = "SELECT gesamtsumme_Konto FROM Tabelle_Konto WHERE name_Konto = @Konto";
-                    SqlCommand selectTotalCommand = new SqlCommand(selectTotalQuery, connection);
+                    string selectTotalQuery = "SELECT gesamtsumme_Konto FROM Konto WHERE name_Konto = @Konto";
+                    SQLiteCommand selectTotalCommand = new SQLiteCommand(selectTotalQuery, connection);
                     selectTotalCommand.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
                     double currentTotal = Convert.ToDouble(selectTotalCommand.ExecuteScalar());
 
                     // Hinzufügen oder Abziehen des Betrags zur Gesamtsumme des Kontos
                     currentTotal += transactionAmount;
 
-                    // Aktualisieren der Gesamtsumme in der Tabelle_Konto
-                    string updateTotalQuery = "UPDATE Tabelle_Konto SET gesamtsumme_Konto = @Gesamtsumme WHERE name_Konto = @Konto";
-                    SqlCommand updateTotalCommand = new SqlCommand(updateTotalQuery, connection);
+                    // Aktualisieren der Gesamtsumme in der Konto
+                    string updateTotalQuery = "UPDATE Konto SET gesamtsumme_Konto = @Gesamtsumme WHERE name_Konto = @Konto";
+                    SQLiteCommand updateTotalCommand = new SQLiteCommand(updateTotalQuery, connection);
                     updateTotalCommand.Parameters.AddWithValue("@Gesamtsumme", currentTotal);
                     updateTotalCommand.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
                     updateTotalCommand.ExecuteNonQuery();
@@ -287,13 +287,13 @@ namespace MartinsHaushaltsbuch
                 {
                     // Lösche den ausgewählten Eintrag aus der Datenbank
                     Entry selectedEntry = (Entry)LstEntries.SelectedItem;
-                    string deleteQuery = "DELETE FROM TabelleBuchung WHERE Titel_Buchung = @Titel";
-                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    string deleteQuery = "DELETE FROM Buchung WHERE Titel_Buchung = @Titel";
+                    using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                     {
                         try
                         {
                             connection.Open();
-                            SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection);
+                            SQLiteCommand deleteCommand = new SQLiteCommand(deleteQuery, connection);
                             deleteCommand.Parameters.AddWithValue("@Titel", selectedEntry.Titel_Buchung);
                             deleteCommand.ExecuteNonQuery();
                             MessageBox.Show("Eintrag erfolgreich gelöscht.", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -324,13 +324,13 @@ namespace MartinsHaushaltsbuch
         {
             List<string> accounts = new List<string>();
             CmbFilterAccount.Items.Add("Alle Konten");
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 try
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand("SELECT name_Konto FROM Tabelle_Konto", connection);
-                    SqlDataReader reader = command.ExecuteReader();
+                    SQLiteCommand command = new SQLiteCommand("SELECT name_Konto FROM Konto", connection);
+                    SQLiteDataReader reader = command.ExecuteReader();
                     while (reader.Read())
                     {
                         string accountName = reader["name_Konto"].ToString();
@@ -364,21 +364,21 @@ namespace MartinsHaushaltsbuch
         private void LoadFilteredEntries()
         {
             List<Entry> entries = new List<Entry>();
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string query = "SELECT Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung FROM TabelleBuchung";
+                    string query = "SELECT Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung FROM Buchung";
                     if (Singleton_Filter.Instance.Konto != "Alle Konten")
                     {
                         query += " WHERE Konto_Buchung = @Konto";
                     }
 
-                    SqlCommand cmd = new SqlCommand(query, conn);
+                    SQLiteCommand cmd = new SQLiteCommand(query, conn);
                     cmd.Parameters.AddWithValue("@Konto", Singleton_Filter.Instance.Konto);
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    SQLiteDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         entries.Add(new Entry
