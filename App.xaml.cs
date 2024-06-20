@@ -16,14 +16,15 @@ namespace MartinsHaushaltsbuch
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Singleton_Filter.Instance.Konto = "Alle Konten"; // Setzen des Standardwerts
+            // Setzen des Standardwerts
+            Singleton_Filter.Instance.Konto = "Alle Konten";
         }
     }
 
     
 
-    ///  Singleton für die globale Verwendung von Filtern. Soll beim Start der App auf bestimmte Default-Werte gesetzt und später vom Nutzer beliebig angepasst werden, 
-    ///  woraufhin die Analysen und Diagramme neu berechnet werden.
+    //  Singleton für die globale Verwendung von Filtern. Soll beim Start der App auf bestimmte Default-Werte gesetzt und später vom Nutzer beliebig angepasst werden, 
+    //  woraufhin die Analysen und Diagramme neu berechnet werden.
 
     public class Singleton_Filter : Page, INotifyPropertyChanged
     {
