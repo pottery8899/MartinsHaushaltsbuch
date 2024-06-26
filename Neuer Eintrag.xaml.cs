@@ -164,6 +164,18 @@ namespace MartinsHaushaltsbuch
         {
             try
             {
+                // Überprüfung, ob alle Felder ausgefüllt sind
+                if (string.IsNullOrWhiteSpace(TxtTitle.Text) ||
+                    CmbAccount.SelectedIndex == -1 ||
+                    CmbCategory.SelectedIndex == -1 ||
+                    string.IsNullOrWhiteSpace(TxtAmount.Text) ||
+                    DpDate.SelectedDate == null ||
+                    string.IsNullOrWhiteSpace(TxtComment.Text))
+                {
+                    MessageBox.Show("Bitte füllen Sie alle Felder aus.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return; // Beende die Methode, wenn ein Feld nicht ausgefüllt ist
+                }
+
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
                     connection.Open();
@@ -198,7 +210,7 @@ namespace MartinsHaushaltsbuch
 
                     // Füge den neuen Eintrag hinzu
                     string insertQuery = @"INSERT INTO Buchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
-                 VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
+                VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
                     using (SQLiteCommand command = new SQLiteCommand(insertQuery, connection))
                     {
                         command.Parameters.AddWithValue("@Titel", TxtTitle.Text);
@@ -238,6 +250,7 @@ namespace MartinsHaushaltsbuch
                 MessageBox.Show("Fehler beim Speichern des Eintrags: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
 
         //---------------------- Bereinigen der Felder im Formular ----------------------
