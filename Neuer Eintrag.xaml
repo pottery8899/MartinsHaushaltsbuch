@@ -65,28 +65,31 @@
         </Button>
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
 
-        <!-- Kontenübersicht -->
-        <ItemsControl ItemsSource="{Binding Accounts}">
+        <!-- Horizontale Liste der Konten mit Gesamtsumme -->
+        <ItemsControl ItemsSource="{Binding Accounts}" Grid.Row="1" Grid.ColumnSpan="3" Margin="800, 15, 0, 0">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20"/>
+                    <WrapPanel Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" Margin="10">
+                    <Border BorderBrush="#156082" BorderThickness="1" CornerRadius="5" Margin="15, 0, 0, 0">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="{Binding AccountName}" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
-                            <TextBlock Text="{Binding TotalAmount, StringFormat='{}{0:C2}'}" Grid.Row="1" HorizontalAlignment="Center" Margin="10"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                                <TextBlock Text="{Binding AccountName}" FontWeight="Bold" Margin="10"/>
+                                <TextBlock Text="{Binding TotalAmount, StringFormat='{}{0:C2}'}" Margin="10"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
 
 
         <!-- Dropdown-Menü für die Kontofilterung -->

@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using System.Data.SQLite;
 using System.Configuration;
+using System.Collections.ObjectModel;
 
 namespace MartinsHaushaltsbuch
 {
@@ -23,6 +24,18 @@ namespace MartinsHaushaltsbuch
         public Window_NewEntry()
         {
             InitializeComponent();
+            Loaded += NeuerEintragWindow_Loaded; // Event-Handler hinzufügen
+        }
+
+
+        //---------------------- Übersicht über die Konten ----------------------
+
+        public ObservableCollection<AccountViewModel> Accounts { get; set; }
+
+        private void NeuerEintragWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadAccounts(); // Lade Accounts aus der Datenbank oder anderer Quelle
+            DataContext = this; // DataContext auf das aktuelle Fenster setzen, um Accounts zu binden
         }
 
         //---------------------- Aufruf der relvanten Funktionen bei Laden der Seite ----------------------
@@ -41,29 +54,39 @@ namespace MartinsHaushaltsbuch
         //---------------------- lokales Festlegen des Connectionstrings in Window_NewEntry für alle enthaltenen Funktionen ----------------------
         string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
 
-        
+
         //---------------------- Laden der Konten für Formular ----------------------
         private void LoadAccounts()
         {
-            List<string> accounts = new List<string>();
+            Accounts = new ObservableCollection<AccountViewModel>();
+
             using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
                 try
-                {                    
-                    conn.Open();                    
-                    SQLiteCommand cmd = new SQLiteCommand("SELECT name_Konto FROM Konto", conn);
+                {
+                    conn.Open();
+                    SQLiteCommand cmd = new SQLiteCommand("SELECT name_Konto, gesamtsumme_Konto FROM Konto", conn);
                     SQLiteDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        accounts.Add(reader["name_Konto"].ToString());
+                        string accountName = reader["name_Konto"].ToString();
+                        double totalAmount = Convert.ToDouble(reader["gesamtsumme_Konto"]);
+
+                        Accounts.Add(new AccountViewModel { AccountName = accountName, TotalAmount = totalAmount });
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error loading accounts: " + ex.Message);
+                    MessageBox.Show("Fehler beim Laden der Konten: " + ex.Message);
                 }
             }
-            CmbAccount.ItemsSource = accounts;
+        }
+
+
+        public class AccountViewModel
+        {
+            public string AccountName { get; set; }
+            public double TotalAmount { get; set; }
         }
 
         //---------------------- Laden der Eingangskonten für Formular ----------------------
