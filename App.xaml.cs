@@ -96,6 +96,8 @@ namespace MartinsHaushaltsbuch
             sqlKategorie.AppendLine("INSERT INTO[Kategorie] ([IdKategorie], [nameKategorie]) VALUES(2, 'Freizeit');");
             sqlKategorie.AppendLine("INSERT INTO[Kategorie] ([IdKategorie], [nameKategorie]) VALUES(3, 'Essen gehen');");
             sqlKategorie.AppendLine("INSERT INTO[Kategorie] ([IdKategorie], [nameKategorie]) VALUES(4, 'Hobbys');");
+            sqlKategorie.AppendLine("INSERT INTO[Kategorie] ([IdKategorie], [nameKategorie]) VALUES(5, 'Sonstiges');");
+            sqlKategorie.AppendLine("INSERT INTO[Kategorie] ([IdKategorie], [nameKategorie]) VALUES(4, 'Einnahmen');");
             SQLiteCommand commandInsertKat = new SQLiteCommand(sqlKategorie.ToString(), sqlite2);
             commandInsertKat.ExecuteNonQuery();
 

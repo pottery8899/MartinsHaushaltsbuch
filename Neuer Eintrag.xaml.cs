@@ -31,6 +31,7 @@ namespace MartinsHaushaltsbuch
         {
             //Singleton_Filter.Instance.Konto = "Alle Konten"; // Setzen des Standardwerts
             LoadAccounts();
+            LoadIncomingAccounts();
             LoadCategories();
             LoadAccountsForFiltering();
             LoadEntries();
@@ -64,6 +65,31 @@ namespace MartinsHaushaltsbuch
             }
             CmbAccount.ItemsSource = accounts;
         }
+
+        //---------------------- Laden der Eingangskonten für Formular ----------------------
+        private void LoadIncomingAccounts()
+        {
+            List<string> incomingAccounts = new List<string>();
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    SQLiteCommand cmd = new SQLiteCommand("SELECT name_Konto FROM Konto", conn); // Hier sollte eine Abfrage für Eingangskonten stehen, falls diese separat gespeichert sind
+                    SQLiteDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        incomingAccounts.Add(reader["name_Konto"].ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading incoming accounts: " + ex.Message);
+                }
+            }
+            CmbIncomingAccount.ItemsSource = incomingAccounts;
+        }
+
 
         //---------------------- Laden der Kategorien für Formular ----------------------
         private void LoadCategories()
@@ -166,7 +192,8 @@ namespace MartinsHaushaltsbuch
             {
                 // Überprüfung, ob alle Felder ausgefüllt sind
                 if (string.IsNullOrWhiteSpace(TxtTitle.Text) ||
-                    CmbAccount.SelectedIndex == -1 ||
+                    (CmbAccount.SelectedIndex == -1 && BtnToggleTransactionType.Content.ToString() != "Umbuchung") ||
+                    (CmbAccount.SelectedIndex == -1 && string.IsNullOrWhiteSpace(CmbIncomingAccount.Text) && BtnToggleTransactionType.Content.ToString() == "Umbuchung") ||
                     CmbCategory.SelectedIndex == -1 ||
                     string.IsNullOrWhiteSpace(TxtAmount.Text) ||
                     DpDate.SelectedDate == null ||
@@ -201,42 +228,55 @@ namespace MartinsHaushaltsbuch
                         deleteCommand.ExecuteNonQuery();
                     }
 
-                    // Multipliziere den Betrag mit -1, wenn es ein Ausgang ist
                     double transactionAmount = Convert.ToDouble(TxtAmount.Text);
-                    if (BtnToggleTransactionType.Content.ToString() == "Ausgang")
+
+                    // Bestimme die Konten basierend auf dem Button-Zustand
+                    string fromAccount = CmbAccount.SelectedItem.ToString();
+                    string toAccount = BtnToggleTransactionType.Content.ToString() == "Umbuchung" ? CmbIncomingAccount.Text : fromAccount;
+
+                    // Berechne den Betrag für Ausgangskonto (negativ) und Eingangskonto (positiv)
+                    double fromAmount = transactionAmount * -1;
+                    double toAmount = transactionAmount;
+
+                    // Füge den neuen Eintrag für das Ausgangskonto hinzu
+                    string insertQueryFrom = @"INSERT INTO Buchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
+            VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
+                    using (SQLiteCommand commandFrom = new SQLiteCommand(insertQueryFrom, connection))
                     {
-                        transactionAmount *= -1;
+                        commandFrom.Parameters.AddWithValue("@Titel", TxtTitle.Text);
+                        commandFrom.Parameters.AddWithValue("@Konto", fromAccount);
+                        commandFrom.Parameters.AddWithValue("@Kategorie", CmbCategory.SelectedItem);
+                        commandFrom.Parameters.AddWithValue("@Betrag", fromAmount);
+                        commandFrom.Parameters.AddWithValue("@Datum", DpDate.SelectedDate);
+                        commandFrom.Parameters.AddWithValue("@Kommentar", TxtComment.Text);
+                        commandFrom.ExecuteNonQuery();
                     }
 
-                    // Füge den neuen Eintrag hinzu
-                    string insertQuery = @"INSERT INTO Buchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
+                    // Füge den neuen Eintrag für das Eingangskonto hinzu, falls es eine Umbuchung ist
+                    if (BtnToggleTransactionType.Content.ToString() == "Umbuchung")
+                    {
+                        string insertQueryTo = @"INSERT INTO Buchung (Titel_Buchung, Konto_Buchung, Kategorie_Buchung, Betrag_Buchung, Datum_Buchung, Kommentar_Buchung) 
                 VALUES (@Titel, @Konto, @Kategorie, @Betrag, @Datum, @Kommentar)";
-                    using (SQLiteCommand command = new SQLiteCommand(insertQuery, connection))
-                    {
-                        command.Parameters.AddWithValue("@Titel", TxtTitle.Text);
-                        command.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
-                        command.Parameters.AddWithValue("@Kategorie", CmbCategory.SelectedItem);
-                        command.Parameters.AddWithValue("@Betrag", transactionAmount); // Verwende hier den transformierten Betrag
-                        command.Parameters.AddWithValue("@Datum", DpDate.SelectedDate);
-                        command.Parameters.AddWithValue("@Kommentar", TxtComment.Text);
-                        command.ExecuteNonQuery();
+                        using (SQLiteCommand commandTo = new SQLiteCommand(insertQueryTo, connection))
+                        {
+                            commandTo.Parameters.AddWithValue("@Titel", TxtTitle.Text);
+                            commandTo.Parameters.AddWithValue("@Konto", toAccount);
+                            commandTo.Parameters.AddWithValue("@Kategorie", CmbCategory.SelectedItem);
+                            commandTo.Parameters.AddWithValue("@Betrag", toAmount);
+                            commandTo.Parameters.AddWithValue("@Datum", DpDate.SelectedDate);
+                            commandTo.Parameters.AddWithValue("@Kommentar", TxtComment.Text);
+                            commandTo.ExecuteNonQuery();
+                        }
                     }
 
-                    // Abrufen der aktuellen Gesamtsumme des Kontos
-                    string selectTotalQuery = "SELECT gesamtsumme_Konto FROM Konto WHERE name_Konto = @Konto";
-                    SQLiteCommand selectTotalCommand = new SQLiteCommand(selectTotalQuery, connection);
-                    selectTotalCommand.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
-                    double currentTotal = Convert.ToDouble(selectTotalCommand.ExecuteScalar());
+                    // Aktualisieren der Gesamtsumme für das Ausgangskonto
+                    UpdateAccountTotal(connection, fromAccount, fromAmount);
 
-                    // Hinzufügen oder Abziehen des Betrags zur Gesamtsumme des Kontos
-                    currentTotal += transactionAmount;
-
-                    // Aktualisieren der Gesamtsumme in der Konto
-                    string updateTotalQuery = "UPDATE Konto SET gesamtsumme_Konto = @Gesamtsumme WHERE name_Konto = @Konto";
-                    SQLiteCommand updateTotalCommand = new SQLiteCommand(updateTotalQuery, connection);
-                    updateTotalCommand.Parameters.AddWithValue("@Gesamtsumme", currentTotal);
-                    updateTotalCommand.Parameters.AddWithValue("@Konto", CmbAccount.SelectedItem);
-                    updateTotalCommand.ExecuteNonQuery();
+                    // Aktualisieren der Gesamtsumme für das Eingangskonto, falls es eine Umbuchung ist
+                    if (BtnToggleTransactionType.Content.ToString() == "Umbuchung")
+                    {
+                        UpdateAccountTotal(connection, toAccount, toAmount);
+                    }
 
                     MessageBox.Show("Eintrag erfolgreich gespeichert!", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -250,6 +290,28 @@ namespace MartinsHaushaltsbuch
                 MessageBox.Show("Fehler beim Speichern des Eintrags: " + ex.Message, "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
+        //---------------------- Updaten des Gesamtbetrags je Konto ----------------------
+        private void UpdateAccountTotal(SQLiteConnection connection, string accountName, double transactionAmount)
+        {
+            // Abrufen der aktuellen Gesamtsumme des Kontos
+            string selectTotalQuery = "SELECT gesamtsumme_Konto FROM Konto WHERE name_Konto = @Konto";
+            SQLiteCommand selectTotalCommand = new SQLiteCommand(selectTotalQuery, connection);
+            selectTotalCommand.Parameters.AddWithValue("@Konto", accountName);
+            double currentTotal = Convert.ToDouble(selectTotalCommand.ExecuteScalar());
+
+            // Hinzufügen oder Abziehen des Betrags zur Gesamtsumme des Kontos
+            currentTotal += transactionAmount;
+
+            // Aktualisieren der Gesamtsumme in der Tabelle Konto
+            string updateTotalQuery = "UPDATE Konto SET gesamtsumme_Konto = @Gesamtsumme WHERE name_Konto = @Konto";
+            SQLiteCommand updateTotalCommand = new SQLiteCommand(updateTotalQuery, connection);
+            updateTotalCommand.Parameters.AddWithValue("@Gesamtsumme", currentTotal);
+            updateTotalCommand.Parameters.AddWithValue("@Konto", accountName);
+            updateTotalCommand.ExecuteNonQuery();
+        }
+
 
 
 
@@ -424,13 +486,39 @@ namespace MartinsHaushaltsbuch
             {
                 BtnToggleTransactionType.Content = "Ausgang";
                 BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFCDD2"));
+
+                // Anpassungen für Eingang -> Ausgang
+                LblAccount.Text = "Ausgangskonto";
+                CmbAccount.Visibility = Visibility.Visible;
+                LblIncomingAccount.Visibility = Visibility.Collapsed; // Verstecke Eingangskonto Label
+                CmbIncomingAccount.Visibility = Visibility.Collapsed; // Verstecke Eingangskonto ComboBox
             }
-            else
+            else if (BtnToggleTransactionType.Content.ToString() == "Ausgang")
+            {
+                BtnToggleTransactionType.Content = "Umbuchung";
+                BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFEB3B"));
+
+                // Anpassungen für Ausgang -> Umbuchung
+                LblAccount.Text = "Ausgangskonto";
+                CmbAccount.Visibility = Visibility.Visible;
+                LblIncomingAccount.Text = "Eingangskonto"; // Setze Eingangskonto Label sichtbar und Text
+                LblIncomingAccount.Visibility = Visibility.Visible;
+                CmbIncomingAccount.Visibility = Visibility.Visible; // Setze Eingangskonto ComboBox sichtbar
+
+                // Lade die Eingangskonten in die ComboBox
+                LoadIncomingAccounts();
+            }
+            else if (BtnToggleTransactionType.Content.ToString() == "Umbuchung")
             {
                 BtnToggleTransactionType.Content = "Eingang";
                 BtnToggleTransactionType.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A5D6A7"));
+
+                // Anpassungen für Umbuchung -> Eingang
+                LblAccount.Text = "Konto der Buchung";
+                CmbAccount.Visibility = Visibility.Visible;
+                LblIncomingAccount.Visibility = Visibility.Collapsed; // Verstecke Eingangskonto Label
+                CmbIncomingAccount.Visibility = Visibility.Collapsed; // Verstecke Eingangskonto ComboBox
             }
         }
-
     }
 }

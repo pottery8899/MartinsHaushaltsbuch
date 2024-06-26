@@ -65,6 +65,30 @@
         </Button>
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
 
+        <!-- Kontenübersicht -->
+        <ItemsControl ItemsSource="{Binding Accounts}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="20"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" Margin="10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding AccountName}" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
+                            <TextBlock Text="{Binding TotalAmount, StringFormat='{}{0:C2}'}" Grid.Row="1" HorizontalAlignment="Center" Margin="10"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+
         <!-- Dropdown-Menü für die Kontofilterung -->
         <ComboBox x:Name="CmbFilterAccount" Width="150" Margin="0,40,40,0" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2" SelectionChanged="CmbFilterAccount_SelectionChanged">
         </ComboBox>
@@ -80,8 +104,16 @@
             <TextBox x:Name="TxtTitle" Width="500" Height="30" Margin="0,5,0,20"/>
 
             <!-- Auswahlfeld Konto, wird aus der Datenbank entnommen -->
-            <TextBlock HorizontalAlignment="Center" Text="Konto der Buchung" FontSize="20"/>
-            <ComboBox x:Name="CmbAccount" Width="500" Height="30" Margin="0,5,0,20"/>
+            <!-- TextBlock HorizontalAlignment="Center" Text="Konto der Buchung" FontSize="20"/-->
+            <!-- ComboBox x:Name="CmbAccount" Width="500" Height="30" Margin="0,5,0,20"/-->
+
+            <!-- Auswahlfeld Ausgangskonto -->
+            <TextBlock x:Name="LblAccount" HorizontalAlignment="Center" Text="Ausgangskonto" FontSize="20"/>
+            <ComboBox x:Name="CmbAccount" Width="500" Height="30" Margin="0,5,0,20" Visibility="Visible"/>
+
+            <!-- Eingangskonto Label und ComboBox -->
+            <TextBlock x:Name="LblIncomingAccount" HorizontalAlignment="Center" Text="Eingangskonto" FontSize="20" Visibility="Collapsed"/>
+            <ComboBox x:Name="CmbIncomingAccount" Width="500" Height="30" Margin="0,5,0,20" Visibility="Collapsed"/>
 
             <!-- Auswahlfeld Kategorie, wird ebenfalls aus der Datenbank entnommen -->
             <TextBlock HorizontalAlignment="Center" Text="Kategorie der Buchung" FontSize="20"/>
@@ -99,8 +131,10 @@
             <TextBlock HorizontalAlignment="Center" Text="Kommentar zur Buchung" FontSize="20"/>
             <TextBox x:Name="TxtComment" Width="500" Height="100" Margin="0,5,0,20" TextWrapping="Wrap" AcceptsReturn="True"/>
 
-            <!-- Buttons zum Speichern der Eingaben und Zurücksetzen / Leeren des Formulars -->
-            <StackPanel Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,140,0,20">
+            </StackPanel>
+
+        <!-- Buttons zum Speichern der Eingaben und Zurücksetzen / Leeren des Formulars -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,100">
                 <Button Content="Zurücksetzen" Width="130" Height="40" FontSize="15px" Margin="10" Click="Button_Reset_Click">
                     <Button.Background>
                         <SolidColorBrush Color="#E0E0E0"/>
@@ -112,7 +146,7 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-        </StackPanel>
+        
 
 
         <!-- Teilstrich in der Mitte -->
