@@ -1,4 +1,6 @@
-﻿using MahApps.Metro.Controls;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.ObjectModel;
 using System.Configuration;
@@ -21,12 +23,16 @@ namespace MartinsHaushaltsbuch
     {
 
         public ObservableCollection<KontoViewModel> KontenListe { get; set; }
+        public SeriesCollection LineSeriesCollection { get; set; }
+        public string[] Labels { get; set; }
 
         //---------------------- Initialisieren der Seite ----------------------
         public Window_Analysis()
         {
             InitializeComponent();
             LoadKonten();
+            DataContext = this;
+            LoadChartData();
         }
 
         //---------------------- Navigation auf Startseite ----------------------
@@ -121,9 +127,50 @@ namespace MartinsHaushaltsbuch
                     // Der Benutzer hat "Alle Konten" ausgewählt
                     Singleton_Filter.Instance.Konto = "Alle Konten";
                 }
+                LoadChartData();  // Daten neu laden, wenn Konto geändert wird
             }
         }
 
+        //---------------------- Code für das Liniendiagramm ----------------------
 
+        private void LoadChartData()
+        {
+            string kontoFilter = Singleton_Filter.Instance.Konto;
+            string connectionString = ConfigurationManager.ConnectionStrings["HaushaltsbuchDB"].ConnectionString;
+
+            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
+            {
+                conn.Open();
+                string query = kontoFilter == "Alle Konten"
+                    ? "SELECT Datum_Buchung, SUM(Betrag_Buchung) as Betrag FROM Buchung GROUP BY Datum_Buchung"
+                    : "SELECT Datum_Buchung, SUM(Betrag_Buchung) as Betrag FROM Buchung WHERE Konto_Buchung = @konto GROUP BY Datum_Buchung";
+
+                SQLiteCommand cmd = new SQLiteCommand(query, conn);
+                if (kontoFilter != "Alle Konten")
+                {
+                    cmd.Parameters.AddWithValue("@konto", kontoFilter);
+                }
+
+                SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(cmd);
+                DataTable dataTable = new DataTable();
+                dataAdapter.Fill(dataTable);
+
+                var dates = dataTable.AsEnumerable().Select(row => row.Field<DateTime>("Datum_Buchung").ToShortDateString()).ToArray();
+                var amounts = dataTable.AsEnumerable().Select(row => row.Field<double>("Betrag")).ToArray();
+
+                LineSeriesCollection = new SeriesCollection
+                {
+                    new LineSeries
+                    {
+                        Title = "Buchungen",
+                        Values = new ChartValues<double>(amounts)
+                    }
+                };
+
+                Labels = dates;
+                DataContext = null;
+                DataContext = this; // Datenbindung aktualisieren
+            }
+        }
     }
 }

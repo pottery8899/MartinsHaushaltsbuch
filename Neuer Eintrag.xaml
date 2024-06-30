@@ -66,7 +66,7 @@
         <Image HorizontalAlignment="Left" Height="132" VerticalAlignment="Top" Width="132" Source="/logo.png" Margin="10,10,0,0"/>
 
         <!-- Horizontale Liste der Konten mit Gesamtsumme -->
-        <ItemsControl ItemsSource="{Binding Accounts}" Grid.Row="1" Grid.ColumnSpan="3" Margin="800, 15, 0, 0">
+        <ItemsControl ItemsSource="{Binding Accounts}" Grid.Row="1" Grid.ColumnSpan="3" Margin="0, 15, 0, 0" HorizontalAlignment="Center">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
@@ -93,7 +93,7 @@
 
 
         <!-- Dropdown-Menü für die Kontofilterung -->
-        <ComboBox x:Name="CmbFilterAccount" Width="150" Margin="0,40,40,0" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2" SelectionChanged="CmbFilterAccount_SelectionChanged">
+        <ComboBox x:Name="CmbFilterAccount" Width="150" Margin="0,40,40,0" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="2" SelectedIndex="0" SelectionChanged="CmbFilterAccount_SelectionChanged">
         </ComboBox>
 
         <!-- Formular für den neuen Eintrag -->

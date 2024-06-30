@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiveCharts" Version="0.9.7" />
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MahApps.Metro" Version="2.4.10" />
     <PackageReference Include="ModernWpfUI" Version="0.9.6" />
     <PackageReference Include="SQLite" Version="3.13.0" />
